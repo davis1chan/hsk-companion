@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HSK Pocket Companion v13</title>
+    <title>HSK Pocket Companion v14</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; }
@@ -77,6 +77,10 @@
         .utility-btn { background-color: white; color: #1CB0F6; border: 2px solid #E5E5E5; border-bottom: 4px solid #E5E5E5; border-radius: 16px; padding: 10px 13px; font-size: 0.9rem; font-weight: 800; font-family: 'Nunito', sans-serif; cursor: pointer; }
         .utility-btn.warning { color: #FF4B4B; }
         .learn-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+        .learn-options.three-options { grid-template-columns: repeat(3, 1fr); }
+        .audio-speed-btn { color: #FF9600; }
+        .audio-speed-btn.is-slow { color: #FF4B4B; }
+        @media (max-width: 420px) { .learn-options.three-options .toggle-btn { font-size: 0.78rem; padding: 10px 6px; } }
         .toggle-btn { background: white; color: #1CB0F6; border: 2px solid #E5E5E5; border-bottom: 4px solid #E5E5E5; border-radius: 16px; padding: 11px 10px; font-size: 0.9rem; font-weight: 800; font-family: 'Nunito', sans-serif; cursor: pointer; }
         .toggle-btn.is-off { color: #AFB2B6; }
         body.hide-english .phrase-card .en-text { display: none; }
@@ -85,6 +89,8 @@
         body.hide-pinyin .grammar-card .example-py { display: none; }
         .phrase-topline { display: flex; gap: 10px; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
         .phrase-topline .en-text { margin-bottom: 0; }
+        .phrase-card .audio-controls { gap: 8px; align-self: center; }
+        .phrase-card .fav-btn { width: 54px; height: 42px; border-radius: 16px; }
         .fav-btn { width: 42px; height: 42px; border-radius: 14px; border: 2px solid #E5E5E5; border-bottom: 4px solid #E5E5E5; background: white; color: #FFB020; font-size: 1.25rem; font-weight: 800; flex-shrink: 0; }
         .fav-btn.is-favourite { background: #FFB020; color: white; border-color: #FFB020; border-bottom-color: #CC7800; }
         .fav-btn:active { transform: translateY(2px); border-bottom-width: 2px; }
@@ -178,14 +184,20 @@
         .quiz-option-btn.correct { background: #D7FFB8; border-color: #58CC02; border-bottom-color: #58A700; color: #4B4B4B; }
         .quiz-option-btn.wrong { background: #FFD6D6; border-color: #FF4B4B; border-bottom-color: #CC3B3B; color: #4B4B4B; }
         .quiz-option-btn:disabled { cursor: default; }
-        .quiz-feedback { display: none; margin-top: 14px; }
+        .quiz-feedback { display: none; margin-top: 10px; }
         .quiz-feedback.is-visible { display: block; }
         .quiz-feedback.good { color: #58A700; }
         .quiz-feedback.bad { color: #FF4B4B; }
-        .quiz-listening-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 12px 0; }
+        .quiz-feedback-card { background: #F7FCFF; border: 2px solid #DDF4FF; border-bottom: 4px solid #DDF4FF; border-radius: 18px; padding: 12px; font-weight: 800; line-height: 1.35; }
+        .quiz-inline-answer { background: #F7FCFF; border: 2px solid #DDF4FF; border-bottom: 4px solid #DDF4FF; border-radius: 18px; padding: 12px; font-weight: 800; line-height: 1.35; margin-bottom: 10px; }
+        .quiz-inline-answer.good { color: #58A700; }
+        .quiz-inline-answer.bad { color: #FF4B4B; }
+        .quiz-inline-next-btn { margin-top: 10px; padding: 13px; font-size: 1rem; }
+        .quiz-listening-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 10px 0; }
         .quiz-audio-btn { width: auto; min-width: 120px; height: auto; padding: 12px 14px; border-radius: 18px; }
         .quiz-next-btn { display: none; }
-        .quiz-next-btn.is-visible { display: block; }
+        .quiz-next-btn.is-visible { display: block; position: fixed; left: 50%; right: auto; bottom: 14px; z-index: 120; width: calc(100% - 36px); max-width: 760px; margin: 0; transform: translateX(-50%); box-shadow: 0 8px 22px rgba(0,0,0,0.16); }
+        .quiz-next-btn.is-visible:active { transform: translateX(-50%) translateY(3px); }
         .quiz-result-score { font-size: 2.2rem; color: #58CC02; font-weight: 800; margin: 12px 0; text-align: center; }
 
         .grammar-btn { background-color: #8E5CFF; border-bottom-color: #6F46CC; }
@@ -268,9 +280,10 @@
             <div class="top-row"><button class="back-btn" onclick="goHome()">← Back</button><span class="badge" id="grammar-count">50 patterns</span></div>
             <h2>🧩 Grammar Patterns</h2>
             <div class="info-card">Build real Chinese sentences from small reusable patterns. Start with Basics, then move into Questions, Connectors, Time & Actions, and Comparison & Fluency.</div>
-            <div class="learn-options">
+            <div class="learn-options three-options">
                 <button class="toggle-btn" id="grammar-toggle-english-btn" onclick="toggleEnglish()">English: On</button>
                 <button class="toggle-btn" id="grammar-toggle-pinyin-btn" onclick="togglePinyin()">Pinyin: On</button>
+                <button class="toggle-btn audio-speed-btn" id="grammar-audio-speed-btn" onclick="toggleAudioSpeed()">Audio: Slow 🐢</button>
             </div>
             <div class="grammar-tabs" id="grammar-tabs"></div>
             <div id="grammar-list"></div>
@@ -309,7 +322,7 @@
 
             <span class="section-label">Choose mode</span>
             <div class="mode-grid">
-                <button class="mode-btn learn-btn" onclick="startLearnMode()"><span class="btn-icon">📖</span>Learn<span class="btn-desc">See 5 items at once. Play normal or slow audio.</span></button>
+                <button class="mode-btn learn-btn" onclick="startLearnMode()"><span class="btn-icon">📖</span>Learn<span class="btn-desc">See 5 items at once. Use the top audio-speed toggle.</span></button>
                 <button class="mode-btn match-btn" onclick="startMatchMode()"><span class="btn-icon">🎮</span>Match Game<span class="btn-desc">Match 5 Chinese cards with their English meanings.</span></button>
                 <button class="mode-btn quiz-btn" onclick="startQuizMode()"><span class="btn-icon">📝</span>Standard Quiz<span class="btn-desc">25 mixed questions: vocab, listening, gap-fill, and grammar.</span></button>
                 <button class="mode-btn grammar-btn" onclick="showGrammarView()"><span class="btn-icon">🧩</span>Grammar Patterns<span class="btn-desc">50 sentence-building patterns with examples and audio.</span></button>
@@ -321,9 +334,10 @@
         <div id="learn-screen">
             <div class="top-row"><button class="back-btn" onclick="goHome()">← Back</button><span class="badge" id="level-badge">HSK 1</span></div>
             <h2>Learn 5</h2>
-            <div class="learn-options">
+            <div class="learn-options three-options">
                 <button class="toggle-btn" id="toggle-english-btn" onclick="toggleEnglish()">English: On</button>
                 <button class="toggle-btn" id="toggle-pinyin-btn" onclick="togglePinyin()">Pinyin: On</button>
+                <button class="toggle-btn audio-speed-btn" id="audio-speed-btn" onclick="toggleAudioSpeed()">Audio: Slow 🐢</button>
             </div>
             <div id="word-list"></div>
             <button class="load-btn" onclick="loadNewLearnSet()">Load New 5</button>
@@ -349,6 +363,10 @@
         <div id="quiz-screen">
             <div class="top-row"><button class="back-btn" onclick="goHome()">← Back</button><span class="badge" id="quiz-level-badge">HSK 1</span></div>
             <h2>📝 Standard Quiz</h2>
+            <div class="learn-options" style="margin-bottom:12px;">
+                <button class="toggle-btn audio-speed-btn" id="quiz-audio-speed-btn" onclick="toggleAudioSpeed()">Audio: Slow 🐢</button>
+                <button class="toggle-btn" onclick="speakCurrentQuizPrompt()">🔊 Replay</button>
+            </div>
             <div class="quiz-progress-card">
                 <div class="quiz-progress-top">
                     <span>Question <span id="quiz-current">1</span> / <span id="quiz-total">25</span></span>
@@ -2318,6 +2336,7 @@
         let currentRoundByKey = {};
         let showEnglish = true;
         let showPinyin = true;
+        let currentSpeechRate = SLOW_SPEECH_RATE;
         let activeGrammarCategory = 'All';
         let activeQuiz = null;
 
@@ -2395,7 +2414,7 @@
             window.speechSynthesis && window.speechSynthesis.cancel();
         }
 
-        function speakWord(text, rate = NORMAL_SPEECH_RATE) {
+        function speakWord(text, rate = currentSpeechRate) {
             if (!window.speechSynthesis) return;
             window.speechSynthesis.cancel();
             const utterance = new SpeechSynthesisUtterance(text);
@@ -2421,11 +2440,11 @@
             const correctAudio = getQuizAnswerAudioText(question, question.answer);
 
             if (selectedAudio) {
-                speakWord(selectedAudio, NORMAL_SPEECH_RATE);
+                speakWord(selectedAudio, currentSpeechRate);
             }
 
             if (!isCorrect && correctAudio && correctAudio !== selectedAudio) {
-                setTimeout(() => speakWord(correctAudio, NORMAL_SPEECH_RATE), 1800);
+                setTimeout(() => speakWord(correctAudio, currentSpeechRate), 1600);
             }
         }
 
@@ -2545,6 +2564,7 @@
             document.getElementById('searchInput').value = '';
             document.getElementById('quiz-screen').style.display = 'block';
             document.getElementById('quiz-level-badge').textContent = getQuizLevelLabel();
+            updateAudioSpeedButtons();
             document.getElementById('quiz-total').textContent = activeQuiz.questions.length;
             renderQuizQuestion();
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -2570,7 +2590,7 @@
 
             let promptHtml = '<div class="quiz-type-label">' + escapeHtml(question.label || 'Quiz') + '</div>';
             if (question.type === 'listening_to_en') {
-                promptHtml += '\n                    <div class="quiz-prompt-en">' + escapeHtml(question.promptEn || 'Listen and choose the meaning.') + '</div>\n                    <div class="quiz-listening-row">\n                        <button class="audio-btn normal-btn quiz-audio-btn" onclick="speakWord(\'' + escapeForJsString(question.audioText) + '\', NORMAL_SPEECH_RATE)"><span class="icon">🔊</span><span class="label">Play</span></button>\n                        <button class="audio-btn slow-btn quiz-audio-btn" onclick="speakWord(\'' + escapeForJsString(question.audioText) + '\', SLOW_SPEECH_RATE)"><span class="icon">🐢</span><span class="label">Slow</span></button>\n                    </div>\n                    <div class="quiz-prompt-note">Choose the English meaning.</div>';
+                promptHtml += '\n                    <div class="quiz-prompt-en">' + escapeHtml(question.promptEn || 'Listen and choose the meaning.') + '</div>\n                    <div class="quiz-listening-row">\n                        <button class="audio-btn normal-btn quiz-audio-btn" onclick="speakWord(\'' + escapeForJsString(question.audioText) + '\')"><span class="icon">🔊</span><span class="label">Play</span></button>\n                    </div>\n                    <div class="quiz-prompt-note">Choose the English meaning.</div>';
             } else {
                 if (question.promptEn) promptHtml += '<div class="quiz-prompt-en">' + escapeHtml(question.promptEn) + '</div>';
                 if (question.promptZh) promptHtml += '<div class="quiz-prompt-zh">' + escapeHtml(question.promptZh) + '</div>';
@@ -2578,11 +2598,11 @@
             }
 
             const optionsHtml = question.options.map(option => '<button class="quiz-option-btn" onclick="answerQuizQuestion(this, \'' + escapeForJsString(option) + '\')">' + escapeHtml(option) + '</button>').join('');
-            card.innerHTML = promptHtml + '<div class="quiz-options">' + optionsHtml + '</div><div class="quiz-feedback" id="quiz-feedback"></div>';
+            card.innerHTML = promptHtml + '<div class="quiz-feedback" id="quiz-feedback"></div><div class="quiz-options">' + optionsHtml + '</div>';
             area.appendChild(card);
 
             if (question.type === 'listening_to_en') {
-                setTimeout(() => speakWord(question.audioText, NORMAL_SPEECH_RATE), 250);
+                setTimeout(() => speakWord(question.audioText), 250);
             }
         }
 
@@ -2607,12 +2627,32 @@
 
             document.getElementById('quiz-score').textContent = activeQuiz.score;
             const feedback = document.getElementById('quiz-feedback');
-            feedback.className = 'quiz-feedback is-visible ' + (isCorrect ? 'good' : 'bad');
-            feedback.innerHTML = isCorrect
-                ? '<div class="info-card">Correct ✅</div>'
-                : '<div class="info-card">Not quite ❌<br>Correct answer: ' + escapeHtml(question.answer) + '</div>';
+            feedback.className = 'quiz-feedback';
+            feedback.innerHTML = '';
+
+            document.querySelectorAll('.quiz-inline-answer').forEach(el => el.remove());
+            const inlineAnswer = document.createElement('div');
+            inlineAnswer.className = 'quiz-inline-answer ' + (isCorrect ? 'good' : 'bad');
+            const nextLabel = activeQuiz.currentIndex >= activeQuiz.questions.length - 1 ? 'See Results' : 'Next Question';
+            inlineAnswer.innerHTML = (isCorrect
+                ? 'Correct ✅'
+                : 'Not quite ❌<br>Correct answer: ' + escapeHtml(question.answer))
+                + '<button class="load-btn quiz-inline-next-btn" type="button" onclick="nextQuizQuestion()">' + nextLabel + '</button>';
+            button.insertAdjacentElement('beforebegin', inlineAnswer);
+
             playQuizAnswerAudio(question, selectedAnswer, isCorrect);
-            document.getElementById('quiz-next-btn').classList.add('is-visible');
+        }
+
+        function speakCurrentQuizPrompt() {
+            if (!activeQuiz) return;
+            const question = activeQuiz.questions[activeQuiz.currentIndex];
+            if (question.audioText) {
+                speakWord(question.audioText);
+            } else if (question.promptZh) {
+                speakWord(question.promptZh.replace('___', question.answer || ''));
+            } else if (question.answer && containsChinese(question.answer)) {
+                speakWord(question.answer);
+            }
         }
 
         function nextQuizQuestion() {
@@ -2678,20 +2718,16 @@
             card.className = 'phrase-card';
             card.innerHTML = `
                 <div class="phrase-content">
-                    <div class="phrase-topline">
-                        <div class="en-text">${escapeHtml(word.english)}</div>
-                        <button class="fav-btn ${favourite ? 'is-favourite' : ''}" type="button" aria-label="Save favourite">${favourite ? '★' : '☆'}</button>
-                    </div>
+                    <div class="en-text">${escapeHtml(word.english)}</div>
                     <div class="zh-text">${escapeHtml(word.character)}</div>
                     <div class="py-text">${escapeHtml(word.pinyin)}</div>
                 </div>
                 <div class="audio-controls">
-                    <button class="audio-btn normal-btn" type="button" aria-label="Play normal speed"><span class="icon">🔊</span><span class="label">Normal</span></button>
-                    <button class="audio-btn slow-btn" type="button" aria-label="Play slow speed"><span class="icon">🐢</span><span class="label">Slow</span></button>
+                    <button class="fav-btn ${favourite ? 'is-favourite' : ''}" type="button" aria-label="Save favourite">${favourite ? '★' : '☆'}</button>
+                    <button class="audio-btn normal-btn play-audio-btn" type="button" aria-label="Play audio"><span class="icon">🔊</span><span class="label">Play</span></button>
                 </div>
             `;
-            card.querySelector('.normal-btn').addEventListener('click', () => speakWord(word.character, NORMAL_SPEECH_RATE));
-            card.querySelector('.slow-btn').addEventListener('click', () => speakWord(word.character, SLOW_SPEECH_RATE));
+            card.querySelector('.play-audio-btn').addEventListener('click', () => speakWord(word.character));
             card.querySelector('.fav-btn').addEventListener('click', (event) => {
                 event.stopPropagation();
                 toggleFavourite(word, event.currentTarget);
@@ -2774,8 +2810,7 @@
                         <div class="example-en">${escapeHtml(example.en)}</div>
                     </div>
                     <div class="audio-controls">
-                        <button class="audio-btn normal-btn grammar-audio" type="button" data-example-index="${index}" data-rate="normal" aria-label="Play normal speed"><span class="icon">🔊</span><span class="label">Normal</span></button>
-                        <button class="audio-btn slow-btn grammar-audio" type="button" data-example-index="${index}" data-rate="slow" aria-label="Play slow speed"><span class="icon">🐢</span><span class="label">Slow</span></button>
+                        <button class="audio-btn normal-btn grammar-audio" type="button" data-example-index="${index}" aria-label="Play audio"><span class="icon">🔊</span><span class="label">Play</span></button>
                     </div>
                 </div>
             `).join('');
@@ -2801,8 +2836,7 @@
             card.querySelectorAll('.grammar-audio').forEach(button => {
                 button.addEventListener('click', () => {
                     const example = pattern.examples[Number(button.dataset.exampleIndex)];
-                    const rate = button.dataset.rate === 'slow' ? SLOW_SPEECH_RATE : NORMAL_SPEECH_RATE;
-                    speakWord(example.zh, rate);
+                    speakWord(example.zh);
                 });
             });
             return card;
@@ -2823,6 +2857,22 @@
                 btn.textContent = showPinyin ? 'Pinyin: On' : 'Pinyin: Hidden';
                 btn.classList.toggle('is-off', !showPinyin);
             });
+            updateAudioSpeedButtons();
+        }
+
+        function updateAudioSpeedButtons() {
+            const isSlow = currentSpeechRate === SLOW_SPEECH_RATE;
+            ['audio-speed-btn', 'grammar-audio-speed-btn', 'quiz-audio-speed-btn'].forEach(id => {
+                const btn = document.getElementById(id);
+                if (!btn) return;
+                btn.textContent = isSlow ? 'Audio: Slow 🐢' : 'Audio: Normal 🔊';
+                btn.classList.toggle('is-slow', isSlow);
+            });
+        }
+
+        function toggleAudioSpeed() {
+            currentSpeechRate = currentSpeechRate === NORMAL_SPEECH_RATE ? SLOW_SPEECH_RATE : NORMAL_SPEECH_RATE;
+            updateAudioSpeedButtons();
         }
 
         function toggleEnglish() {
