@@ -328,7 +328,7 @@
                 <button class="level-btn" data-level="2" onclick="selectLevel('2', this)">HSK 2<span class="level-count" id="count-hsk-2"></span></button>
                 <button class="level-btn" data-level="3" onclick="selectLevel('3', this)">HSK 3<span class="level-count" id="count-hsk-3"></span></button>
                 <button class="level-btn" data-level="all" onclick="selectLevel('all', this)">All HSK 1-3<span class="level-count" id="count-hsk-all"></span></button>
-                <button class="level-btn common" data-level="common" onclick="selectLevel('common', this)">Common Phrases<span class="level-count" id="count-common"></span></button>
+                <button class="level-btn common" data-level="common" onclick="selectLevel('common', this)">Common Phrases</button>
             </div>
 
             <span class="section-label">Choose mode</span>
@@ -1019,7 +1019,7 @@
         };
 
         const commonPhrases = [
-            { character: "你好，很高兴认识你。", pinyin: "nǐ hǎo, hěn gāoxìng rènshi nǐ.", english: "Hello, nice to meet you." },
+{ character: "你好，很高兴认识你。", pinyin: "nǐ hǎo, hěn gāoxìng rènshi nǐ.", english: "Hello, nice to meet you." },
             { character: "谢谢你的帮助。", pinyin: "xièxie nǐ de bāngzhù.", english: "Thank you for your help." },
             { character: "不客气。", pinyin: "bú kèqi.", english: "You're welcome." },
             { character: "对不起。", pinyin: "duìbuqǐ.", english: "I'm sorry." },
@@ -1048,7 +1048,56 @@
             { character: "我想喝水。", pinyin: "wǒ xiǎng hē shuǐ.", english: "I want to drink water." },
             { character: "这个很好吃。", pinyin: "zhège hěn hǎochī.", english: "This is delicious." },
             { character: "我身体不舒服。", pinyin: "wǒ shēntǐ bù shūfu.", english: "I don't feel well." },
-            { character: "我要去医院。", pinyin: "wǒ yào qù yīyuàn.", english: "I need to go to the hospital." }
+            { character: "我要去医院。", pinyin: "wǒ yào qù yīyuàn.", english: "I need to go to the hospital." },
+{ character: "她是我的中文老师。", pinyin: "tā shì wǒ de Zhōngwén lǎoshī.", english: "She is my Chinese teacher." },
+            { character: "你叫什么名字？", pinyin: "nǐ jiào shénme míngzi?", english: "What's your name?" },
+            { character: "她女儿今年二十岁。", pinyin: "tā nǚ'ér jīnnián èrshí suì.", english: "Her daughter is 20 years old this year." },
+            { character: "我会说中文。", pinyin: "wǒ huì shuō Zhōngwén.", english: "I can speak Chinese." },
+            { character: "今天几号？", pinyin: "jīntiān jǐ hào?", english: "What's the date today?" },
+            { character: "我想喝点儿茶。", pinyin: "wǒ xiǎng hē diǎnr chá.", english: "I'd like some tea." },
+            { character: "你儿子在哪儿工作？", pinyin: "nǐ érzi zài nǎr gōngzuò?", english: "Where does your son work?" },
+            { character: "我可以坐这儿吗？", pinyin: "wǒ kěyǐ zuò zhèr ma?", english: "Can I sit here?" },
+            { character: "现在几点？", pinyin: "xiànzài jǐ diǎn?", english: "What's the time now?" },
+            { character: "明天天气怎么样？", pinyin: "míngtiān tiānqì zěnmeyàng?", english: "What will the weather be like tomorrow?" },
+            { character: "他正在学习做中国菜。", pinyin: "tā zhèngzài xuéxí zuò Zhōngguó cài.", english: "He is learning to cook Chinese food." },
+            { character: "她买了不少衣服。", pinyin: "tā mǎi le bù shǎo yīfu.", english: "She has bought quite a few clothes." },
+            { character: "我是坐飞机来的。", pinyin: "wǒ shì zuò fēijī lái de.", english: "I came here by air." },
+            { character: "九月是去北京旅游的最好时间。", pinyin: "jiǔ yuè shì qù Běijīng lǚyóu de zuì hǎo shíjiān.", english: "September is the best time to visit Beijing." },
+            { character: "我每天六点起床。", pinyin: "wǒ měitiān liù diǎn qǐchuáng.", english: "I get up at 6 every day." },
+            { character: "左边那个红色的是我的。", pinyin: "zuǒbian nà ge hóngsè de shì wǒ de.", english: "The red one on the left is mine." },
+            { character: "这个工作是他帮我介绍的。", pinyin: "zhège gōngzuò shì tā bāng wǒ jièshào de.", english: "This job was introduced to me by him." },
+            { character: "就买这件吧。", pinyin: "jiù mǎi zhè jiàn ba.", english: "Let's just buy this one." },
+            { character: "你为什么不多吃一点儿？", pinyin: "nǐ wèishénme bù duō chī yìdiǎnr?", english: "Why don't you eat more?" },
+            { character: "你家离公司远吗？", pinyin: "nǐ jiā lí gōngsī yuǎn ma?", english: "Do you live far from your company?" },
+            { character: "让我想一想，晚一点儿告诉你。", pinyin: "ràng wǒ xiǎng yi xiǎng, wǎn yìdiǎnr gàosu nǐ.", english: "Let me think about it and I'll tell you later." },
+            { character: "问题太多了，我没有全做完。", pinyin: "wèntí tài duō le, wǒ méiyǒu quán zuò wán.", english: "There were too many questions; I didn't finish all of them." },
+            { character: "别找了，手机在桌子上呢。", pinyin: "bié zhǎo le, shǒujī zài zhuōzi shàng ne.", english: "Stop looking for your cell phone; it's on the desk." },
+            { character: "他比我大三岁。", pinyin: "tā bǐ wǒ dà sān suì.", english: "He is three years older than me." },
+            { character: "你穿得太少了。", pinyin: "nǐ chuān de tài shǎo le.", english: "You wear too little." },
+            { character: "门开着。", pinyin: "mén kāi zhe.", english: "The door is open." },
+            { character: "你看过那部电影吗？", pinyin: "nǐ kànguo nà bù diànyǐng ma?", english: "Have you seen that movie?" },
+            { character: "新年快到了。", pinyin: "xīnnián kuài dào le.", english: "The New Year is coming." },
+            { character: "周末你有什么打算？", pinyin: "zhōumò nǐ yǒu shénme dǎsuàn?", english: "What's your plan for the weekend?" },
+            { character: "他什么时候回来？", pinyin: "tā shénme shíhou huílái?", english: "When will he come back?" },
+            { character: "桌子上有很多饮料。", pinyin: "zhuōzi shàng yǒu hěn duō yǐnliào.", english: "There are plenty of drinks on the table." },
+            { character: "她总是笑着跟客人说话。", pinyin: "tā zǒng shì xiào zhe gēn kèrén shuōhuà.", english: "She always smiles when talking to customers." },
+            { character: "我最近越来越胖了。", pinyin: "wǒ zuìjìn yuè lái yuè pàng le.", english: "I am getting fatter and fatter lately." },
+            { character: "他们为什么突然不见了？", pinyin: "tāmen wèishénme tūrán bú jiàn le?", english: "Why are they suddenly missing?" },
+            { character: "我认识她五年了。", pinyin: "wǒ rènshi tā wǔ nián le.", english: "I've known her for five years." },
+            { character: "你去哪儿，我就去哪儿。", pinyin: "nǐ qù nǎr, wǒ jiù qù nǎr.", english: "I'll go wherever you go." },
+            { character: "她中文说得像中国人一样。", pinyin: "tā Zhōngwén shuō de xiàng Zhōngguó rén yíyàng.", english: "She speaks Chinese like a native." },
+            { character: "数学比历史难多了。", pinyin: "shùxué bǐ lìshǐ nán duō le.", english: "Maths is much harder than history." },
+            { character: "别忘了把空调关了。", pinyin: "bié wàng le bǎ kōngtiáo guān le.", english: "Don't forget to turn off the air conditioner." },
+            { character: "把重要的东西放在我这里吧。", pinyin: "bǎ zhòngyào de dōngxi fàng zài wǒ zhèlǐ ba.", english: "Leave the important items with me." },
+            { character: "我走回来了。", pinyin: "wǒ zǒu huílái le.", english: "I walked back." },
+            { character: "你把水果拿过来。", pinyin: "nǐ bǎ shuǐguǒ ná guòlái.", english: "Please bring the fruit here." },
+            { character: "其他都没什么问题。", pinyin: "qítā dōu méi shénme wèntí.", english: "The rest of them are OK." },
+            { character: "我现在累得下班后就想睡觉。", pinyin: "wǒ xiànzài lèi de xiàbān hòu jiù xiǎng shuìjiào.", english: "I am so tired that I want to do nothing but sleep after work." },
+            { character: "谁都有办法看好你的“病”。", pinyin: "shéi dōu yǒu bànfǎ kàn hǎo nǐ de “bìng”.", english: "Everybody is able to cure your ‘disease’." },
+            { character: "我相信他们会同意。", pinyin: "wǒ xiāngxìn tāmen huì tóngyì.", english: "I believe they'll agree." },
+            { character: "你没认出他吗？", pinyin: "nǐ méi rèn chū tā ma?", english: "Didn't you recognise him?" },
+            { character: "我被他影响了。", pinyin: "wǒ bèi tā yǐngxiǎng le.", english: "I've been influenced by him." }
+
         ];
 
         const grammarPatterns = [
@@ -2397,7 +2446,6 @@
             document.getElementById('count-hsk-2').textContent = `${wordsByLevel[2].length} words`;
             document.getElementById('count-hsk-3').textContent = `${wordsByLevel[3].length} words`;
             document.getElementById('count-hsk-all').textContent = `${wordsByLevel[1].length + wordsByLevel[2].length + wordsByLevel[3].length} words`;
-            document.getElementById('count-common').textContent = `${commonPhrases.length} phrases`;
         }
 
         function hideAllScreens() {
