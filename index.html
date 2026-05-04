@@ -35,6 +35,7 @@
         .subtitle { text-align: center; font-weight: 800; color: white; opacity: 0.95; font-size: 0.9rem; margin-top: 4px; }
         .section-label { display: block; color: #3C3C3C; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 800; margin: 18px 0 10px; }
         .search-container { margin-bottom: 20px; }
+        .search-container.is-hidden { display: none; }
         #searchInput {
             width: 100%; font-family: 'Nunito', sans-serif; font-size: 1.02rem; font-weight: 800;
             padding: 15px 18px; border-radius: 18px; border: 2px solid #E5E5E5; border-bottom: 5px solid #E5E5E5;
@@ -168,37 +169,47 @@
         @media (min-width: 650px) { .mode-grid { grid-template-columns: 1fr 1fr; } .level-grid { grid-template-columns: repeat(5, 1fr); } .level-btn.common { grid-column: auto; } }
 
         .quiz-btn { background-color: #CE82FF; border-bottom-color: #A765CC; }
-        .quiz-progress-card { background: white; border: 2px solid #E5E5E5; border-bottom: 5px solid #E5E5E5; border-radius: 20px; padding: 14px; margin-bottom: 16px; }
-        .quiz-progress-top { display: flex; justify-content: space-between; gap: 10px; font-weight: 800; margin-bottom: 10px; flex-wrap: wrap; }
-        .quiz-bar { width: 100%; height: 14px; background: #E5E5E5; border-radius: 999px; overflow: hidden; }
+        .quiz-progress-card { background: white; border: 2px solid #E5E5E5; border-bottom: 5px solid #E5E5E5; border-radius: 20px; padding: 10px 12px; margin-bottom: 10px; }
+        .quiz-progress-top { display: flex; justify-content: space-between; gap: 10px; font-weight: 800; margin-bottom: 7px; flex-wrap: wrap; }
+        .quiz-bar { width: 100%; height: 10px; background: #E5E5E5; border-radius: 999px; overflow: hidden; }
         .quiz-bar-fill { height: 100%; width: 0%; background: #58CC02; border-radius: 999px; transition: width 0.2s ease; }
-        .quiz-question-card { background: white; border: 2px solid #E5E5E5; border-bottom: 5px solid #E5E5E5; border-radius: 22px; padding: 18px; margin-bottom: 16px; animation: popIn 0.25s ease forwards; }
-        .quiz-type-label { display: inline-block; background: #F7FCFF; color: #1CB0F6; border: 2px solid #DDF4FF; border-radius: 999px; padding: 7px 10px; font-size: 0.78rem; font-weight: 800; margin-bottom: 12px; }
-        .quiz-prompt-en { font-size: 1.15rem; color: #4B4B4B; font-weight: 800; line-height: 1.35; margin-bottom: 8px; }
-        .quiz-prompt-zh { font-size: 1.8rem; color: #FF4B4B; font-weight: 800; line-height: 1.35; margin-bottom: 6px; word-break: break-word; }
-        .quiz-prompt-py { font-size: 1rem; color: #1CB0F6; font-weight: 800; line-height: 1.35; margin-bottom: 8px; }
+        .quiz-question-card { background: white; border: 2px solid #E5E5E5; border-bottom: 5px solid #E5E5E5; border-radius: 22px; padding: 14px; margin-bottom: 12px; animation: popIn 0.25s ease forwards; }
+        .quiz-type-label { display: inline-block; background: #F7FCFF; color: #1CB0F6; border: 2px solid #DDF4FF; border-radius: 999px; padding: 6px 9px; font-size: 0.74rem; font-weight: 800; margin-bottom: 9px; }
+        .quiz-prompt-en { font-size: 1.05rem; color: #4B4B4B; font-weight: 800; line-height: 1.28; margin-bottom: 6px; }
+        .quiz-prompt-zh { font-size: 1.55rem; color: #FF4B4B; font-weight: 800; line-height: 1.25; margin-bottom: 4px; word-break: break-word; }
+        .quiz-prompt-py { font-size: 0.92rem; color: #1CB0F6; font-weight: 800; line-height: 1.25; margin-bottom: 5px; }
         .quiz-prompt-note { color: #6F7680; font-size: 0.9rem; font-weight: 800; line-height: 1.35; margin-top: 8px; }
-        .quiz-options { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 16px; }
-        .quiz-option-btn { background: white; color: #4B4B4B; border: 2px solid #E5E5E5; border-bottom: 5px solid #E5E5E5; border-radius: 18px; padding: 14px; text-align: left; font-size: 1rem; font-weight: 800; font-family: 'Nunito', sans-serif; cursor: pointer; line-height: 1.3; transition: all 0.1s ease; }
+        .quiz-options { display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 10px; }
+        .quiz-option-btn { background: white; color: #4B4B4B; border: 2px solid #E5E5E5; border-bottom: 5px solid #E5E5E5; border-radius: 18px; padding: 11px 12px; text-align: left; font-size: 0.96rem; font-weight: 800; font-family: 'Nunito', sans-serif; cursor: pointer; line-height: 1.24; transition: all 0.1s ease; }
         .quiz-option-btn:active { transform: translateY(3px); border-bottom-width: 2px; }
         .quiz-option-btn.correct { background: #D7FFB8; border-color: #58CC02; border-bottom-color: #58A700; color: #4B4B4B; }
         .quiz-option-btn.wrong { background: #FFD6D6; border-color: #FF4B4B; border-bottom-color: #CC3B3B; color: #4B4B4B; }
         .quiz-option-btn:disabled { cursor: default; }
-        .quiz-feedback { display: none; margin-top: 10px; }
+        .quiz-feedback { display: none; margin-top: 8px; }
         .quiz-feedback.is-visible { display: block; }
         .quiz-feedback.good { color: #58A700; }
         .quiz-feedback.bad { color: #FF4B4B; }
         .quiz-feedback-card { background: #F7FCFF; border: 2px solid #DDF4FF; border-bottom: 4px solid #DDF4FF; border-radius: 18px; padding: 12px; font-weight: 800; line-height: 1.35; }
-        .quiz-inline-answer { background: #F7FCFF; border: 2px solid #DDF4FF; border-bottom: 4px solid #DDF4FF; border-radius: 18px; padding: 12px; font-weight: 800; line-height: 1.35; margin-bottom: 10px; }
+        .quiz-inline-answer { background: #F7FCFF; border: 2px solid #DDF4FF; border-bottom: 4px solid #DDF4FF; border-radius: 18px; padding: 10px; font-weight: 800; line-height: 1.28; margin-bottom: 8px; }
         .quiz-inline-answer.good { color: #58A700; }
         .quiz-inline-answer.bad { color: #FF4B4B; }
-        .quiz-inline-next-btn { margin-top: 10px; padding: 13px; font-size: 1rem; }
-        .quiz-listening-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 10px 0; }
-        .quiz-audio-btn { width: auto; min-width: 120px; height: auto; padding: 12px 14px; border-radius: 18px; }
+        .quiz-inline-next-btn { margin-top: 8px; padding: 11px; font-size: 0.98rem; }
+        .quiz-listening-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 6px 0; }
+        .quiz-audio-btn { width: auto; min-width: 110px; height: auto; padding: 10px 12px; border-radius: 18px; }
         .quiz-next-btn { display: none; }
         .quiz-next-btn.is-visible { display: block; position: fixed; left: 50%; right: auto; bottom: 14px; z-index: 120; width: calc(100% - 36px); max-width: 760px; margin: 0; transform: translateX(-50%); box-shadow: 0 8px 22px rgba(0,0,0,0.16); }
         .quiz-next-btn.is-visible:active { transform: translateX(-50%) translateY(3px); }
         .quiz-result-score { font-size: 2.2rem; color: #58CC02; font-weight: 800; margin: 12px 0; text-align: center; }
+        #quiz-screen h2 { display: none; }
+        #quiz-screen .quiz-top-controls { margin-bottom: 8px; }
+        @media (max-width: 520px) {
+            #quiz-screen .top-row { margin-bottom: 8px; }
+            #quiz-screen .quiz-top-controls .toggle-btn { padding: 9px 8px; font-size: 0.82rem; }
+            .quiz-progress-card { padding: 8px 10px; margin-bottom: 8px; }
+            .quiz-question-card { padding: 12px; }
+            .quiz-prompt-zh { font-size: 1.38rem; }
+            .quiz-option-btn { padding: 10px 11px; font-size: 0.92rem; }
+        }
 
         .grammar-btn { background-color: #8E5CFF; border-bottom-color: #6F46CC; }
         #grammar-screen { display: none; width: 100%; }
@@ -363,7 +374,7 @@
         <div id="quiz-screen">
             <div class="top-row"><button class="back-btn" onclick="goHome()">← Back</button><span class="badge" id="quiz-level-badge">HSK 1</span></div>
             <h2>📝 Standard Quiz</h2>
-            <div class="learn-options" style="margin-bottom:12px;">
+            <div class="learn-options quiz-top-controls">
                 <button class="toggle-btn audio-speed-btn" id="quiz-audio-speed-btn" onclick="toggleAudioSpeed()">Audio: Slow 🐢</button>
                 <button class="toggle-btn" onclick="speakCurrentQuizPrompt()">🔊 Replay</button>
             </div>
@@ -2395,11 +2406,19 @@
             });
         }
 
+        function setSearchVisibility(show) {
+            const searchContainer = document.querySelector('.search-container');
+            if (searchContainer) {
+                searchContainer.classList.toggle('is-hidden', !show);
+            }
+        }
+
         function goHome() {
             stopChallengeTimer();
             activePracticePool = null;
             activePracticeLabel = '';
             hideAllScreens();
+            setSearchVisibility(true);
             document.getElementById('home-screen').style.display = 'block';
             document.getElementById('searchInput').value = '';
             updateChallengeButtonVisibility();
@@ -2409,6 +2428,7 @@
         function showHelpView() {
             stopChallengeTimer();
             hideAllScreens();
+            setSearchVisibility(true);
             document.getElementById('searchInput').value = '';
             document.getElementById('help-screen').style.display = 'block';
             window.speechSynthesis && window.speechSynthesis.cancel();
@@ -2561,13 +2581,14 @@
                 missed: []
             };
             hideAllScreens();
+            setSearchVisibility(false);
             document.getElementById('searchInput').value = '';
             document.getElementById('quiz-screen').style.display = 'block';
             document.getElementById('quiz-level-badge').textContent = getQuizLevelLabel();
             updateAudioSpeedButtons();
             document.getElementById('quiz-total').textContent = activeQuiz.questions.length;
             renderQuizQuestion();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo({ top: 0, behavior: 'auto' });
         }
 
         function renderQuizQuestion() {
@@ -2627,18 +2648,12 @@
 
             document.getElementById('quiz-score').textContent = activeQuiz.score;
             const feedback = document.getElementById('quiz-feedback');
-            feedback.className = 'quiz-feedback';
-            feedback.innerHTML = '';
-
-            document.querySelectorAll('.quiz-inline-answer').forEach(el => el.remove());
-            const inlineAnswer = document.createElement('div');
-            inlineAnswer.className = 'quiz-inline-answer ' + (isCorrect ? 'good' : 'bad');
             const nextLabel = activeQuiz.currentIndex >= activeQuiz.questions.length - 1 ? 'See Results' : 'Next Question';
-            inlineAnswer.innerHTML = (isCorrect
-                ? 'Correct ✅'
-                : 'Not quite ❌<br>Correct answer: ' + escapeHtml(question.answer))
-                + '<button class="load-btn quiz-inline-next-btn" type="button" onclick="nextQuizQuestion()">' + nextLabel + '</button>';
-            button.insertAdjacentElement('beforebegin', inlineAnswer);
+            feedback.className = 'quiz-feedback is-visible';
+            feedback.innerHTML = '<div class="quiz-inline-answer ' + (isCorrect ? 'good' : 'bad') + '">'
+                + (isCorrect ? 'Correct ✅' : 'Not quite ❌<br>Correct answer: ' + escapeHtml(question.answer))
+                + '<button class="load-btn quiz-inline-next-btn" type="button" onclick="nextQuizQuestion()">' + nextLabel + '</button>'
+                + '</div>';
 
             playQuizAnswerAudio(question, selectedAnswer, isCorrect);
         }
@@ -2664,7 +2679,7 @@
             }
             activeQuiz.currentIndex += 1;
             renderQuizQuestion();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo({ top: 0, behavior: 'auto' });
         }
 
         function showQuizResults() {
@@ -2674,6 +2689,7 @@
             const missedCount = total - score;
             const percent = Math.round((score / total) * 100);
             hideAllScreens();
+            setSearchVisibility(false);
             document.getElementById('result-screen').style.display = 'block';
             document.getElementById('result-screen').querySelector('h2').textContent = '📝 Quiz Complete';
             document.getElementById('result-summary').innerHTML = '<div class="quiz-result-score">' + score + ' / ' + total + '</div><div>You scored ' + percent + '% on ' + getQuizLevelLabel() + '.</div>';
@@ -2684,7 +2700,7 @@
             playButton.textContent = 'Try Another Quiz 🔄';
             playButton.onclick = startQuizMode;
             activeQuiz = null;
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo({ top: 0, behavior: 'auto' });
         }
 
         function escapeForJsString(value) {
@@ -2699,6 +2715,7 @@
             activePracticePool = null;
             activePracticeLabel = '';
             hideAllScreens();
+            setSearchVisibility(true);
             document.getElementById('learn-screen').style.display = 'block';
             document.getElementById('level-badge').textContent = getLevelLabel();
             updateLearningToggles();
@@ -2709,7 +2726,7 @@
             const pool = getWordPool();
             const set = shuffleArray([...pool]).slice(0, LEARN_SET_SIZE);
             renderLearnCards(set, 'word-list');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo({ top: 0, behavior: 'auto' });
         }
 
         function createLearnCard(word) {
@@ -2758,12 +2775,13 @@
             activePracticeLabel = '';
             activeGrammarCategory = category || 'All';
             hideAllScreens();
+            setSearchVisibility(true);
             document.getElementById('searchInput').value = '';
             document.getElementById('grammar-screen').style.display = 'block';
             updateLearningToggles();
             renderGrammarTabs();
             renderGrammarCards();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo({ top: 0, behavior: 'auto' });
         }
 
         function renderGrammarTabs() {
@@ -2892,6 +2910,7 @@
             stopChallengeTimer();
             document.getElementById('timer-pill').classList.remove('is-visible');
             hideAllScreens();
+            setSearchVisibility(false);
             document.getElementById('match-screen').style.display = 'block';
             document.getElementById('match-level-badge').textContent = getLevelLabel();
             initGame();
@@ -2914,6 +2933,7 @@
             document.getElementById('match-complete-note').style.display = 'none';
             document.getElementById('match-next-btn').classList.toggle('is-visible', currentMode !== 'challenge');
             hideAllScreens();
+            setSearchVisibility(false);
             document.getElementById('match-screen').style.display = 'block';
             document.getElementById('match-level-badge').textContent = activePracticeLabel || getLevelLabel();
 
@@ -3036,6 +3056,7 @@
 
         function showResult(totalPairs, message) {
             stopChallengeTimer();
+            setSearchVisibility(false);
             document.getElementById('match-screen').style.display = 'none';
             document.getElementById('result-screen').style.display = 'block';
             document.getElementById('result-screen').querySelector('h2').textContent = '🎉 Well Done!';
@@ -3065,6 +3086,7 @@
             challengeQueue = shuffleArray([...getWordPool()]).slice(0, CHALLENGE_TARGET);
 
             hideAllScreens();
+            setSearchVisibility(false);
             document.getElementById('match-screen').style.display = 'block';
             document.getElementById('match-level-badge').textContent = getLevelLabel() + ' Challenge';
             document.getElementById('matched-count').textContent = '0';
@@ -3175,6 +3197,7 @@
         function showFavouritesView() {
             stopChallengeTimer();
             hideAllScreens();
+            setSearchVisibility(true);
             document.getElementById('searchInput').value = '';
             document.getElementById('favourites-screen').style.display = 'block';
             const favourites = getFavourites();
@@ -3230,6 +3253,7 @@
             stopChallengeTimer();
             document.getElementById('timer-pill').classList.remove('is-visible');
             hideAllScreens();
+            setSearchVisibility(false);
             document.getElementById('match-screen').style.display = 'block';
             initGame();
         }
@@ -3276,6 +3300,7 @@
         function showMistakesView() {
             stopChallengeTimer();
             hideAllScreens();
+            setSearchVisibility(true);
             document.getElementById('searchInput').value = '';
             document.getElementById('mistakes-screen').style.display = 'block';
             const mistakesList = getMistakes();
@@ -3307,6 +3332,7 @@
             if (!queryRaw) { goHome(); return; }
 
             hideAllScreens();
+            setSearchVisibility(true);
             document.getElementById('search-screen').style.display = 'block';
 
             const phraseMatches = getAllItems().filter(item => {
