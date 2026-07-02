@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HSK Pocket Companion v14</title>
+    <title>HSK Pocket Companion v20</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; }
@@ -43,8 +43,8 @@
         }
         #searchInput:focus { border-color: #1CB0F6; border-bottom-color: #1899D6; transform: translateY(-1px); box-shadow: 0 8px 18px rgba(28,176,246,0.18); }
         #searchInput::placeholder { color: #9BA0A5; }
-        #home-screen, #learn-screen, #match-screen, #quiz-screen, #result-screen, #search-screen, #favourites-screen, #mistakes-screen, #grammar-screen, #help-screen { width: 100%; }
-        #learn-screen, #match-screen, #quiz-screen, #result-screen, #search-screen, #favourites-screen, #mistakes-screen, #grammar-screen, #help-screen { display: none; }
+        #home-screen, #learn-screen, #match-screen, #quiz-screen, #result-screen, #search-screen, #favourites-screen, #mistakes-screen, #grammar-screen, #measure-words-screen, #help-screen { width: 100%; }
+        #learn-screen, #match-screen, #quiz-screen, #result-screen, #search-screen, #favourites-screen, #mistakes-screen, #grammar-screen, #measure-words-screen, #help-screen { display: none; }
         .level-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
         .level-btn, .mode-btn, .back-btn, .load-btn, .result-btn, .fav-btn {
             font-family: 'Nunito', sans-serif; cursor: pointer; transition: all 0.1s ease; -webkit-tap-highlight-color: transparent;
@@ -211,6 +211,36 @@
             .quiz-option-btn { padding: 10px 11px; font-size: 0.92rem; }
         }
 
+        .measure-words-btn { background-color: #2BC4A8; border-bottom-color: #209982; }
+        #measure-words-screen { display: none; width: 100%; }
+        .measure-view-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+        .measure-view-btn { background: white; color: #2B9D89; border: 2px solid #E5E5E5; border-bottom: 4px solid #E5E5E5; border-radius: 16px; padding: 11px 10px; font-size: 0.9rem; font-weight: 800; font-family: 'Nunito', sans-serif; cursor: pointer; }
+        .measure-view-btn.active { background: #2BC4A8; color: white; border-color: #2BC4A8; border-bottom-color: #209982; }
+        .measure-progress { text-align: center; color: #6F7680; font-size: 0.88rem; font-weight: 800; margin: -4px 0 14px; }
+        .measure-card { background: white; border: 2px solid #E5E5E5; border-bottom: 5px solid #E5E5E5; border-radius: 22px; padding: 18px; margin-bottom: 16px; animation: popIn 0.25s ease forwards; }
+        .measure-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+        .measure-heading { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+        .measure-character { color: #FF4B4B; font-size: 2rem; font-weight: 800; line-height: 1; }
+        .measure-pinyin { color: #1CB0F6; font-size: 1.05rem; font-weight: 800; }
+        .measure-number { background: #2BC4A8; color: white; border-radius: 999px; padding: 7px 10px; font-size: 0.78rem; font-weight: 800; flex-shrink: 0; }
+        .measure-used-for { background: #F1FFFB; border: 2px solid #D4F7EF; border-radius: 16px; padding: 11px 12px; color: #287E6E; font-weight: 800; line-height: 1.35; margin-bottom: 13px; }
+        .measure-example { border-top: 2px solid #F0F0F0; padding-top: 13px; display: flex; gap: 12px; justify-content: space-between; align-items: center; }
+        .measure-example-content { flex: 1; min-width: 0; }
+        .measure-example-zh { font-size: 1.3rem; color: #FF4B4B; font-weight: 800; line-height: 1.35; margin-bottom: 5px; }
+        .measure-example-py { color: #1CB0F6; font-weight: 800; line-height: 1.35; margin-bottom: 5px; }
+        .measure-example-en { color: #4B4B4B; font-weight: 800; line-height: 1.35; }
+        .measure-navigation { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 6px; }
+        .measure-navigation .load-btn { margin-top: 0; }
+        .measure-navigation .secondary { background: white; color: #2B9D89; border: 2px solid #E5E5E5; border-bottom: 5px solid #E5E5E5; }
+        body.hide-english .measure-example-en { display: none; }
+        body.hide-pinyin .measure-pinyin, body.hide-pinyin .measure-example-py { display: none; }
+        @media (max-width: 520px) {
+            .measure-card { padding: 16px; }
+            .measure-character { font-size: 1.8rem; }
+            .measure-example { align-items: flex-start; }
+            .measure-example-zh { font-size: 1.18rem; }
+        }
+
         .grammar-btn { background-color: #8E5CFF; border-bottom-color: #6F46CC; }
         #grammar-screen { display: none; width: 100%; }
         .grammar-tabs { display: flex; gap: 8px; overflow-x: auto; padding: 2px 0 14px; margin-bottom: 10px; -webkit-overflow-scrolling: touch; }
@@ -287,6 +317,27 @@
 
 
 
+        <div id="measure-words-screen">
+            <div class="top-row"><button class="back-btn" onclick="goHome()">← Back</button><span class="badge" id="measure-words-count">30 measure words</span></div>
+            <h2>🔢 Measure Words</h2>
+            <div class="info-card">Learn which classifier to use for people, objects, food, transport, events, places, and other common nouns. Study three at a time, or open the full reference list.</div>
+            <div class="learn-options three-options">
+                <button class="toggle-btn" id="measure-toggle-english-btn" onclick="toggleEnglish()">English: On</button>
+                <button class="toggle-btn" id="measure-toggle-pinyin-btn" onclick="togglePinyin()">Pinyin: On</button>
+                <button class="toggle-btn audio-speed-btn" id="measure-audio-speed-btn" onclick="toggleAudioSpeed()">Audio: Slow 🐢</button>
+            </div>
+            <div class="measure-view-controls">
+                <button class="measure-view-btn active" id="measure-learn-three-btn" onclick="setMeasureWordsView('learn')">Learn 3</button>
+                <button class="measure-view-btn" id="measure-view-all-btn" onclick="setMeasureWordsView('all')">View All</button>
+            </div>
+            <div class="measure-progress" id="measure-progress">Measure words 1–3 of 30</div>
+            <div id="measure-words-list"></div>
+            <div class="measure-navigation" id="measure-navigation">
+                <button class="load-btn secondary" id="measure-prev-btn" onclick="previousMeasureWords()">← Previous 3</button>
+                <button class="load-btn" id="measure-next-btn" onclick="nextMeasureWords()">Next 3 →</button>
+            </div>
+        </div>
+
         <div id="grammar-screen">
             <div class="top-row"><button class="back-btn" onclick="goHome()">← Back</button><span class="badge" id="grammar-count">50 patterns</span></div>
             <h2>🧩 Grammar Patterns</h2>
@@ -305,11 +356,12 @@
             <h2>❔ How to Use</h2>
             <div class="intro-card">
                 <div class="intro-title">Your pocket Mandarin practice app</div>
-                <p class="intro-text">Practise HSK 1-3 vocabulary, useful beginner phrases, and 50 sentence-building grammar patterns in short, playful sessions.</p>
+                <p class="intro-text">Practise HSK 1-3 vocabulary, useful beginner phrases, 50 sentence-building grammar patterns, and 30 common measure words in short, playful sessions.</p>
                 <div class="how-grid">
                     <div class="how-step"><strong>📖 Learn</strong><br>Review 5 words or phrases at a time with Chinese, pinyin, English, and audio.</div>
                     <div class="how-step"><strong>🎮 Match</strong><br>Match Chinese cards with English meanings to build quick recall.</div>
                     <div class="how-step"><strong>🧩 Grammar</strong><br>Save whole grammar patterns and practise the example sentences with audio.</div>
+                    <div class="how-step"><strong>🔢 Measure Words</strong><br>Learn three classifiers at a time with fuller examples, or browse all 30 as a reference.</div>
                     <div class="how-step"><strong>⭐ Favourites</strong><br>Build your own revision list for words, phrases, and grammar patterns.</div>
                 </div>
                 <p class="small-note">Tip: download the file and open it in your browser for offline practice. Audio uses your browser's built-in Chinese voice, so sound quality and availability may vary by device.</p>
@@ -333,13 +385,14 @@
 
             <span class="section-label">Choose mode</span>
             <div class="mode-grid">
-                <button class="mode-btn learn-btn" onclick="startLearnMode()"><span class="btn-icon">📖</span>Learn<span class="btn-desc">See 5 items at once. Use the top audio-speed toggle.</span></button>
-                <button class="mode-btn match-btn" onclick="startMatchMode()"><span class="btn-icon">🎮</span>Match Game<span class="btn-desc">Match 5 Chinese cards with their English meanings.</span></button>
+                <button class="mode-btn learn-btn" onclick="startLearnMode()"><span class="btn-icon">📖</span>Learn<span class="btn-desc">Review five items at a time. Use the audio-speed control above.</span></button>
+                <button class="mode-btn match-btn" onclick="startMatchMode()"><span class="btn-icon">🎮</span>Match Game<span class="btn-desc">Match five Chinese cards with their English meanings.</span></button>
                 <button class="mode-btn quiz-btn" onclick="startQuizMode()"><span class="btn-icon">📝</span>Standard Quiz<span class="btn-desc">25 mixed questions: vocab, listening, gap-fill, and grammar.</span></button>
                 <button class="mode-btn grammar-btn" onclick="showGrammarView()"><span class="btn-icon">🧩</span>Grammar Patterns<span class="btn-desc">50 sentence-building patterns with examples and audio.</span></button>
+                <button class="mode-btn measure-words-btn" onclick="showMeasureWordsView()"><span class="btn-icon">🔢</span>Measure Words<span class="btn-desc">Learn 30 common classifiers through full example sentences.</span></button>
                 <button class="mode-btn challenge-btn" id="challenge-btn" onclick="startChallengeMode()"><span class="btn-icon">⏱️</span>60 Second Challenge<span class="btn-desc">HSK only: match 30 words in 60 seconds, 5 pairs at a time.</span></button>
             </div>
-            <div class="info-card" style="margin-top:20px;">Tip: use Common Phrases for everyday HSK-safe sentences. You can add more phrases later without changing the app structure.</div>
+            <div class="info-card" style="margin-top:20px;">Tip: use Common Phrases to practise useful beginner-level sentences.</div>
         </div>
 
         <div id="learn-screen">
@@ -431,7 +484,7 @@
                 { character: "点", pinyin: "diǎn", english: "O'clock / Dot" },
                 { character: "电脑", pinyin: "diànnǎo", english: "Computer" },
                 { character: "电视", pinyin: "diànshì", english: "Television" },
-                { character: "电影", pinyin: "diànyǐng", english: "Movie" },
+                { character: "电影", pinyin: "diànyǐng", english: "Film" },
                 { character: "东西", pinyin: "dōngxi", english: "Thing" },
                 { character: "都", pinyin: "dōu", english: "All / Both" },
                 { character: "读", pinyin: "dú", english: "To read" },
@@ -472,7 +525,7 @@
                 { character: "里", pinyin: "lǐ", english: "Inside" },
                 { character: "零", pinyin: "líng", english: "Zero" },
                 { character: "六", pinyin: "liù", english: "Six" },
-                { character: "妈妈", pinyin: "māma", english: "Mom" },
+                { character: "妈妈", pinyin: "māma", english: "Mum" },
                 { character: "吗", pinyin: "ma", english: "(Question particle)" },
                 { character: "买", pinyin: "mǎi", english: "To buy" },
                 { character: "没关系", pinyin: "méi guānxi", english: "It doesn't matter" },
@@ -659,7 +712,7 @@
                 { character: "生病", pinyin: "shēngbìng", english: "To get sick" },
                 { character: "生日", pinyin: "shēngrì", english: "Birthday" },
                 { character: "时间", pinyin: "shíjiān", english: "Time" },
-                { character: "事情", pinyin: "shìqing", english: "Matter / Thing" },
+                { character: "事情", pinyin: "shìqing", english: "Matter / Affair / Situation" },
                 { character: "手表", pinyin: "shǒubiǎo", english: "Watch" },
                 { character: "手机", pinyin: "shǒujī", english: "Mobile phone" },
                 { character: "送", pinyin: "sòng", english: "To deliver / Give" },
@@ -667,7 +720,7 @@
                 { character: "但是", pinyin: "dànshì", english: "But" },
                 { character: "它", pinyin: "tā", english: "It" },
                 { character: "踢足球", pinyin: "tī zúqiú", english: "To play soccer" },
-                { character: "题", pinyin: "tí", english: "Topic / Question" },
+                { character: "题", pinyin: "tí", english: "Question / Exercise problem" },
                 { character: "跳舞", pinyin: "tiàowǔ", english: "To dance" },
                 { character: "外", pinyin: "wài", english: "Outside" },
                 { character: "完", pinyin: "wán", english: "To finish" },
@@ -719,12 +772,12 @@
                 { character: "左边", pinyin: "zuǒbian", english: "Left side" }
             ],
 3: [
-                { character: "阿姨", pinyin: "āyí", english: "Aunt / Maid" },
+                { character: "阿姨", pinyin: "āyí", english: "Auntie / Older woman / Housekeeper" },
                 { character: "啊", pinyin: "a", english: "Ah / Oh" },
                 { character: "矮", pinyin: "ǎi", english: "Short (height)" },
-                { character: "爱好", pinyin: "àihào", english: "Hobby / To like" },
+                { character: "爱好", pinyin: "àihào", english: "Hobby / To be fond of" },
                 { character: "安静", pinyin: "ānjìng", english: "Quiet" },
-                { character: "把", pinyin: "bǎ", english: "(Measure word / structural word)" },
+                { character: "把", pinyin: "bǎ", english: "Classifier for handled objects / 把 construction marker" },
                 { character: "班", pinyin: "bān", english: "Class / Shift" },
                 { character: "搬", pinyin: "bān", english: "To move (objects)" },
                 { character: "办法", pinyin: "bànfǎ", english: "Method / Way" },
@@ -744,7 +797,7 @@
                 { character: "别人", pinyin: "biéren", english: "Other people" },
                 { character: "冰箱", pinyin: "bīngxiāng", english: "Refrigerator" },
                 { character: "不但", pinyin: "búdàn", english: "Not only" },
-                { character: "而且", pinyin: "érqiě", english: "But also / And" },
+                { character: "而且", pinyin: "érqiě", english: "And also / Moreover" },
                 { character: "菜单", pinyin: "càidān", english: "Menu" },
                 { character: "参加", pinyin: "cānjiā", english: "To participate / Join" },
                 { character: "草", pinyin: "cǎo", english: "Grass" },
@@ -770,7 +823,7 @@
                 { character: "地", pinyin: "de", english: "(Adverbial particle)" },
                 { character: "灯", pinyin: "dēng", english: "Lamp / Light" },
                 { character: "地方", pinyin: "dìfang", english: "Place" },
-                { character: "地铁", pinyin: "dìtiě", english: "Subway" },
+                { character: "地铁", pinyin: "dìtiě", english: "Metro / Subway" },
                 { character: "地图", pinyin: "dìtú", english: "Map" },
                 { character: "电梯", pinyin: "diàntī", english: "Elevator" },
                 { character: "电子邮件", pinyin: "diànzǐ yóujiàn", english: "Email" },
@@ -788,7 +841,7 @@
                 { character: "方便", pinyin: "fāngbiàn", english: "Convenient" },
                 { character: "放", pinyin: "fàng", english: "To put / Place" },
                 { character: "放心", pinyin: "fàngxīn", english: "To feel relieved" },
-                { character: "分", pinyin: "fēn", english: "Minute / Point / Part" },
+                { character: "分", pinyin: "fēn", english: "Minute / Point / Part / To divide" },
                 { character: "附近", pinyin: "fùjìn", english: "Nearby" },
                 { character: "复习", pinyin: "fùxí", english: "To review" },
                 { character: "干净", pinyin: "gānjìng", english: "Clean" },
@@ -836,9 +889,9 @@
                 { character: "健康", pinyin: "jiànkāng", english: "Healthy / Health" },
                 { character: "讲", pinyin: "jiǎng", english: "To speak / Explain" },
                 { character: "教", pinyin: "jiāo", english: "To teach" },
-                { character: "角", pinyin: "jiǎo", english: "1/10 of a Yuan / Horn" },
+                { character: "角", pinyin: "jiǎo", english: "One-tenth of a yuan / Corner / Angle / Horn" },
                 { character: "脚", pinyin: "jiǎo", english: "Foot" },
-                { character: "接", pinyin: "jiē", english: "To receive / Connect" },
+                { character: "接", pinyin: "jiē", english: "To receive / Answer / Pick up / Connect" },
                 { character: "街道", pinyin: "jiēdào", english: "Street" },
                 { character: "节目", pinyin: "jiémù", english: "Program" },
                 { character: "节日", pinyin: "jiérì", english: "Festival / Holiday" },
@@ -847,7 +900,7 @@
                 { character: "解决", pinyin: "jiějué", english: "To solve / Resolve" },
                 { character: "借", pinyin: "jiè", english: "To borrow / Lend" },
                 { character: "经常", pinyin: "jīngcháng", english: "Often / Frequently" },
-                { character: "经过", pinyin: "jīngguò", english: "To pass by / Process" },
+                { character: "经过", pinyin: "jīngguò", english: "To pass through or by / Process" },
                 { character: "经理", pinyin: "jīnglǐ", english: "Manager" },
                 { character: "久", pinyin: "jiǔ", english: "Long time" },
                 { character: "旧", pinyin: "jiù", english: "Old / Used" },
@@ -858,7 +911,7 @@
                 { character: "刻", pinyin: "kè", english: "Quarter of an hour" },
                 { character: "客人", pinyin: "kèrén", english: "Guest" },
                 { character: "空调", pinyin: "kōngtiáo", english: "Air conditioning" },
-                { character: "口", pinyin: "kǒu", english: "Mouth / Measure word" },
+                { character: "口", pinyin: "kǒu", english: "Mouth / Classifier for family members and mouthfuls" },
                 { character: "哭", pinyin: "kū", english: "To cry" },
                 { character: "裤子", pinyin: "kùzi", english: "Pants" },
                 { character: "筷子", pinyin: "kuàizi", english: "Chopsticks" },
@@ -868,7 +921,7 @@
                 { character: "礼物", pinyin: "lǐwù", english: "Gift / Present" },
                 { character: "历史", pinyin: "lìshǐ", english: "History" },
                 { character: "脸", pinyin: "liǎn", english: "Face" },
-                { character: "练习", pinyin: "liànxí", english: "To practice / Exercise" },
+                { character: "练习", pinyin: "liànxí", english: "To practise / Practice exercise" },
                 { character: "辆", pinyin: "liàng", english: "Measure word for vehicles" },
                 { character: "聊天", pinyin: "liáotiān", english: "To chat" },
                 { character: "了解", pinyin: "liǎojiě", english: "To understand / Know well" },
@@ -931,9 +984,9 @@
                 { character: "司机", pinyin: "sījī", english: "Driver" },
                 { character: "太阳", pinyin: "tàiyáng", english: "Sun" },
                 { character: "特别", pinyin: "tèbié", english: "Special / Especially" },
-                { character: "疼", pinyin: "téng", english: "Pain / Sore" },
+                { character: "疼", pinyin: "téng", english: "To hurt / Painful" },
                 { character: "提高", pinyin: "tígāo", english: "To improve / Raise" },
-                { character: "体育", pinyin: "tǐyù", english: "P.E. / Sports" },
+                { character: "体育", pinyin: "tǐyù", english: "Physical education / Sport" },
                 { character: "甜", pinyin: "tián", english: "Sweet" },
                 { character: "条", pinyin: "tiáo", english: "Measure word for long things" },
                 { character: "同事", pinyin: "tóngshì", english: "Colleague" },
@@ -965,7 +1018,7 @@
                 { character: "新闻", pinyin: "xīnwén", english: "News" },
                 { character: "新鲜", pinyin: "xīnxiān", english: "Fresh" },
                 { character: "信用卡", pinyin: "xìnyòngkǎ", english: "Credit card" },
-                { character: "行李箱", pinyin: "xínglǐxiāng", english: "Suitcase / Luggage" },
+                { character: "行李箱", pinyin: "xínglǐxiāng", english: "Suitcase" },
                 { character: "熊猫", pinyin: "xióngmāo", english: "Panda" },
                 { character: "需要", pinyin: "xūyào", english: "To need" },
                 { character: "选择", pinyin: "xuǎnzé", english: "To choose / Choice" },
@@ -977,7 +1030,7 @@
                 { character: "一样", pinyin: "yíyàng", english: "Same" },
                 { character: "一般", pinyin: "yìbān", english: "Generally / Ordinary" },
                 { character: "一边", pinyin: "yìbiān", english: "One side / At the same time" },
-                { character: "一直", pinyin: "yìzhí", english: "Always / Straight" },
+                { character: "一直", pinyin: "yìzhí", english: "Continuously / All along / Straight ahead" },
                 { character: "以前", pinyin: "yǐqián", english: "Before / Formerly" },
                 { character: "音乐", pinyin: "yīnyuè", english: "Music" },
                 { character: "银行", pinyin: "yínháng", english: "Bank" },
@@ -1014,7 +1067,7 @@
                 { character: "最后", pinyin: "zuìhòu", english: "Finally / Last" },
                 { character: "最近", pinyin: "zuìjìn", english: "Recently" },
                 { character: "作业", pinyin: "zuòyè", english: "Homework" },
-                { character: "作用", pinyin: "zuòyòng", english: "Function / Effect" }
+                { character: "作用", pinyin: "zuòyòng", english: "Function / Effect / Role" }
             ]
         };
 
@@ -1026,11 +1079,11 @@
             { character: "没关系。", pinyin: "méi guānxi.", english: "It doesn't matter." },
             { character: "请等一下。", pinyin: "qǐng děng yíxià.", english: "Please wait a moment." },
             { character: "我不懂。", pinyin: "wǒ bù dǒng.", english: "I don't understand." },
-            { character: "我听不懂你说话。", pinyin: "wǒ tīng bù dǒng nǐ shuōhuà.", english: "I don't understand what you are saying." },
-            { character: "请你慢一点。", pinyin: "qǐng nǐ màn yìdiǎn.", english: "Please slow down a little." },
+            { character: "我听不懂你在说什么。", pinyin: "wǒ tīngbudǒng nǐ zài shuō shénme.", english: "I don't understand what you're saying." },
+            { character: "请说慢一点儿。", pinyin: "qǐng shuō màn yìdiǎnr.", english: "Please speak a little more slowly." },
             { character: "你可以帮助我吗？", pinyin: "nǐ kěyǐ bāngzhù wǒ ma?", english: "Can you help me?" },
             { character: "我有一个问题。", pinyin: "wǒ yǒu yí ge wèntí.", english: "I have a question." },
-            { character: "我可以问你吗？", pinyin: "wǒ kěyǐ wèn nǐ ma?", english: "May I ask you?" },
+            { character: "我可以问你一个问题吗？", pinyin: "wǒ kěyǐ wèn nǐ yí ge wèntí ma?", english: "May I ask you a question?" },
             { character: "请告诉我。", pinyin: "qǐng gàosu wǒ.", english: "Please tell me." },
             { character: "我知道。", pinyin: "wǒ zhīdào.", english: "I know." },
             { character: "我不知道。", pinyin: "wǒ bù zhīdào.", english: "I don't know." },
@@ -1065,39 +1118,72 @@
             { character: "九月是去北京旅游的最好时间。", pinyin: "jiǔ yuè shì qù Běijīng lǚyóu de zuì hǎo shíjiān.", english: "September is the best time to visit Beijing." },
             { character: "我每天六点起床。", pinyin: "wǒ měitiān liù diǎn qǐchuáng.", english: "I get up at 6 every day." },
             { character: "左边那个红色的是我的。", pinyin: "zuǒbian nà ge hóngsè de shì wǒ de.", english: "The red one on the left is mine." },
-            { character: "这个工作是他帮我介绍的。", pinyin: "zhège gōngzuò shì tā bāng wǒ jièshào de.", english: "This job was introduced to me by him." },
-            { character: "就买这件吧。", pinyin: "jiù mǎi zhè jiàn ba.", english: "Let's just buy this one." },
+            { character: "这个工作是他帮我介绍的。", pinyin: "zhège gōngzuò shì tā bāng wǒ jièshào de.", english: "He helped me get this job." },
+            { character: "就买这件吧。", pinyin: "jiù mǎi zhè jiàn ba.", english: "I'll take this one, then." },
             { character: "你为什么不多吃一点儿？", pinyin: "nǐ wèishénme bù duō chī yìdiǎnr?", english: "Why don't you eat more?" },
-            { character: "你家离公司远吗？", pinyin: "nǐ jiā lí gōngsī yuǎn ma?", english: "Do you live far from your company?" },
+            { character: "你家离公司远吗？", pinyin: "nǐ jiā lí gōngsī yuǎn ma?", english: "Is your home far from your workplace?" },
             { character: "让我想一想，晚一点儿告诉你。", pinyin: "ràng wǒ xiǎng yi xiǎng, wǎn yìdiǎnr gàosu nǐ.", english: "Let me think about it and I'll tell you later." },
             { character: "问题太多了，我没有全做完。", pinyin: "wèntí tài duō le, wǒ méiyǒu quán zuò wán.", english: "There were too many questions; I didn't finish all of them." },
-            { character: "别找了，手机在桌子上呢。", pinyin: "bié zhǎo le, shǒujī zài zhuōzi shàng ne.", english: "Stop looking for your cell phone; it's on the desk." },
+            { character: "别找了，你的手机在桌子上呢。", pinyin: "bié zhǎo le, nǐ de shǒujī zài zhuōzi shàng ne.", english: "Stop looking—your mobile phone is on the desk." },
             { character: "他比我大三岁。", pinyin: "tā bǐ wǒ dà sān suì.", english: "He is three years older than me." },
-            { character: "你穿得太少了。", pinyin: "nǐ chuān de tài shǎo le.", english: "You wear too little." },
+            { character: "你穿得太少了。", pinyin: "nǐ chuān de tài shǎo le.", english: "You aren't wearing enough clothes." },
             { character: "门开着。", pinyin: "mén kāi zhe.", english: "The door is open." },
             { character: "你看过那部电影吗？", pinyin: "nǐ kànguo nà bù diànyǐng ma?", english: "Have you seen that movie?" },
             { character: "新年快到了。", pinyin: "xīnnián kuài dào le.", english: "The New Year is coming." },
-            { character: "周末你有什么打算？", pinyin: "zhōumò nǐ yǒu shénme dǎsuàn?", english: "What's your plan for the weekend?" },
+            { character: "周末你有什么打算？", pinyin: "zhōumò nǐ yǒu shénme dǎsuàn?", english: "What are your plans for the weekend?" },
             { character: "他什么时候回来？", pinyin: "tā shénme shíhou huílái?", english: "When will he come back?" },
             { character: "桌子上有很多饮料。", pinyin: "zhuōzi shàng yǒu hěn duō yǐnliào.", english: "There are plenty of drinks on the table." },
-            { character: "她总是笑着跟客人说话。", pinyin: "tā zǒng shì xiào zhe gēn kèrén shuōhuà.", english: "She always smiles when talking to customers." },
-            { character: "我最近越来越胖了。", pinyin: "wǒ zuìjìn yuè lái yuè pàng le.", english: "I am getting fatter and fatter lately." },
-            { character: "他们为什么突然不见了？", pinyin: "tāmen wèishénme tūrán bú jiàn le?", english: "Why are they suddenly missing?" },
+            { character: "她总是笑着跟客人说话。", pinyin: "tā zǒng shì xiào zhe gēn kèrén shuōhuà.", english: "She always smiles when she talks to customers." },
+            { character: "我最近越来越胖了。", pinyin: "wǒ zuìjìn yuè lái yuè pàng le.", english: "I've been putting on more and more weight lately." },
+            { character: "他们为什么突然不见了？", pinyin: "tāmen wèishénme tūrán bú jiàn le?", english: "Why did they suddenly disappear?" },
             { character: "我认识她五年了。", pinyin: "wǒ rènshi tā wǔ nián le.", english: "I've known her for five years." },
             { character: "你去哪儿，我就去哪儿。", pinyin: "nǐ qù nǎr, wǒ jiù qù nǎr.", english: "I'll go wherever you go." },
             { character: "她中文说得像中国人一样。", pinyin: "tā Zhōngwén shuō de xiàng Zhōngguó rén yíyàng.", english: "She speaks Chinese like a native." },
             { character: "数学比历史难多了。", pinyin: "shùxué bǐ lìshǐ nán duō le.", english: "Maths is much harder than history." },
             { character: "别忘了把空调关了。", pinyin: "bié wàng le bǎ kōngtiáo guān le.", english: "Don't forget to turn off the air conditioner." },
-            { character: "把重要的东西放在我这里吧。", pinyin: "bǎ zhòngyào de dōngxi fàng zài wǒ zhèlǐ ba.", english: "Leave the important items with me." },
+            { character: "把重要的东西放在我这里吧。", pinyin: "bǎ zhòngyào de dōngxi fàng zài wǒ zhèlǐ ba.", english: "Leave the important things with me." },
             { character: "我走回来了。", pinyin: "wǒ zǒu huílái le.", english: "I walked back." },
-            { character: "你把水果拿过来。", pinyin: "nǐ bǎ shuǐguǒ ná guòlái.", english: "Please bring the fruit here." },
-            { character: "其他都没什么问题。", pinyin: "qítā dōu méi shénme wèntí.", english: "The rest of them are OK." },
-            { character: "我现在累得下班后就想睡觉。", pinyin: "wǒ xiànzài lèi de xiàbān hòu jiù xiǎng shuìjiào.", english: "I am so tired that I want to do nothing but sleep after work." },
-            { character: "谁都有办法看好你的“病”。", pinyin: "shéi dōu yǒu bànfǎ kàn hǎo nǐ de “bìng”.", english: "Everybody is able to cure your ‘disease’." },
+            { character: "请把水果拿过来。", pinyin: "qǐng bǎ shuǐguǒ ná guòlái.", english: "Please bring the fruit over here." },
+            { character: "其他都没什么问题。", pinyin: "qítā dōu méi shénme wèntí.", english: "Everything else is fine." },
+            { character: "我最近很累，下班后什么都不想做，只想睡觉。", pinyin: "wǒ zuìjìn hěn lèi, xiàbān hòu shénme dōu bù xiǎng zuò, zhǐ xiǎng shuìjiào.", english: "I've been very tired lately. After work, I don't want to do anything except sleep." },
+            { character: "别担心，我们会想办法的。", pinyin: "bié dānxīn, wǒmen huì xiǎng bànfǎ de.", english: "Don't worry—we'll find a way." },
             { character: "我相信他们会同意。", pinyin: "wǒ xiāngxìn tāmen huì tóngyì.", english: "I believe they'll agree." },
             { character: "你没认出他吗？", pinyin: "nǐ méi rèn chū tā ma?", english: "Didn't you recognise him?" },
-            { character: "我被他影响了。", pinyin: "wǒ bèi tā yǐngxiǎng le.", english: "I've been influenced by him." }
+            { character: "我被他影响了。", pinyin: "wǒ bèi tā yǐngxiǎng le.", english: "He has influenced me." }
 
+        ];
+
+        const measureWords = [
+            { measureWord: "个", pinyin: "gè", usedFor: "General classifier for people and many objects", exampleZh: "我们班有二十个学生。", examplePy: "Wǒmen bān yǒu èrshí gè xuésheng.", exampleEn: "There are twenty students in our class.", category: "General & People" },
+            { measureWord: "本", pinyin: "běn", usedFor: "Books and notebooks", exampleZh: "我买了两本中文书。", examplePy: "Wǒ mǎi le liǎng běn Zhōngwén shū.", exampleEn: "I bought two Chinese books.", category: "Objects & Clothing" },
+            { measureWord: "张", pinyin: "zhāng", usedFor: "Flat objects such as paper, tickets, and tables", exampleZh: "我订了两张去上海的票。", examplePy: "Wǒ dìng le liǎng zhāng qù Shànghǎi de piào.", exampleEn: "I booked two tickets to Shanghai.", category: "Objects & Clothing" },
+            { measureWord: "条", pinyin: "tiáo", usedFor: "Long things such as rivers, roads, and fish", exampleZh: "这座城市有两条很有名的河。", examplePy: "Zhè zuò chéngshì yǒu liǎng tiáo hěn yǒumíng de hé.", exampleEn: "This city has two very famous rivers.", category: "Nature & Places" },
+            { measureWord: "只", pinyin: "zhī", usedFor: "Animals, birds, and one item from a pair", exampleZh: "她家有两只很可爱的猫。", examplePy: "Tā jiā yǒu liǎng zhī hěn kě’ài de māo.", exampleEn: "She has two very cute cats at home.", category: "Animals & Nature" },
+            { measureWord: "辆", pinyin: "liàng", usedFor: "Vehicles", exampleZh: "门口停着两辆黑色的车。", examplePy: "Ménkǒu tíngzhe liǎng liàng hēisè de chē.", exampleEn: "There are two black cars parked at the entrance.", category: "Transport" },
+            { measureWord: "件", pinyin: "jiàn", usedFor: "Clothes, matters, events, and certain items", exampleZh: "我想买两件新的衣服。", examplePy: "Wǒ xiǎng mǎi liǎng jiàn xīn de yīfu.", exampleEn: "I want to buy two new pieces of clothing.", category: "Objects & Clothing" },
+            { measureWord: "家", pinyin: "jiā", usedFor: "Businesses, shops, companies, and households", exampleZh: "这条街上有三家咖啡店。", examplePy: "Zhè tiáo jiē shàng yǒu sān jiā kāfēi diàn.", exampleEn: "There are three cafés on this street.", category: "Places & Organisations" },
+            { measureWord: "位", pinyin: "wèi", usedFor: "Polite classifier for people", exampleZh: "今天有两位老师来我们学校。", examplePy: "Jīntiān yǒu liǎng wèi lǎoshī lái wǒmen xuéxiào.", exampleEn: "Two teachers are coming to our school today.", category: "General & People" },
+            { measureWord: "名", pinyin: "míng", usedFor: "People in formal or official contexts", exampleZh: "公司今年招聘了五名新员工。", examplePy: "Gōngsī jīnnián zhāopìn le wǔ míng xīn yuángōng.", exampleEn: "The company hired five new employees this year.", category: "General & People" },
+            { measureWord: "杯", pinyin: "bēi", usedFor: "Cups or glasses of drinks", exampleZh: "我每天早上喝一杯咖啡。", examplePy: "Wǒ měitiān zǎoshang hē yì bēi kāfēi.", exampleEn: "I drink one cup of coffee every morning.", category: "Food & Containers" },
+            { measureWord: "瓶", pinyin: "píng", usedFor: "Bottles or bottlefuls", exampleZh: "他买了两瓶矿泉水。", examplePy: "Tā mǎi le liǎng píng kuàngquánshuǐ.", exampleEn: "He bought two bottles of mineral water.", category: "Food & Containers" },
+            { measureWord: "碗", pinyin: "wǎn", usedFor: "Bowls and bowlfuls", exampleZh: "天气冷的时候，我喜欢喝一碗热汤。", examplePy: "Tiānqì lěng de shíhou, wǒ xǐhuan hē yì wǎn rè tāng.", exampleEn: "When it’s cold, I like to have a bowl of hot soup.", category: "Food & Containers" },
+            { measureWord: "双", pinyin: "shuāng", usedFor: "Pairs such as shoes, socks, and chopsticks", exampleZh: "我需要买一双舒服的鞋。", examplePy: "Wǒ xūyào mǎi yì shuāng shūfu de xié.", exampleEn: "I need to buy a comfortable pair of shoes.", category: "Objects & Clothing" },
+            { measureWord: "对", pinyin: "duì", usedFor: "Pairs and couples", exampleZh: "公园里有一对老夫妻在散步。", examplePy: "Gōngyuán lǐ yǒu yí duì lǎo fūqī zài sànbù.", exampleEn: "An elderly couple is walking in the park.", category: "General & People" },
+            { measureWord: "块", pinyin: "kuài", usedFor: "Pieces, chunks, and yuan", exampleZh: "这块蛋糕看起来很好吃。", examplePy: "Zhè kuài dàngāo kànqǐlái hěn hǎochī.", exampleEn: "This piece of cake looks delicious.", category: "Food & Containers" },
+            { measureWord: "片", pinyin: "piàn", usedFor: "Slices and thin, flat pieces", exampleZh: "早餐我吃了两片面包。", examplePy: "Zǎocān wǒ chī le liǎng piàn miànbāo.", exampleEn: "For breakfast, I ate two slices of bread.", category: "Food & Containers" },
+            { measureWord: "支", pinyin: "zhī", usedFor: "Pens and other slender, stick-shaped objects", exampleZh: "桌子上有三支笔。", examplePy: "Zhuōzi shàng yǒu sān zhī bǐ.", exampleEn: "There are three pens on the table.", category: "Objects & Clothing" },
+            { measureWord: "棵", pinyin: "kē", usedFor: "Trees and larger plants with stems or trunks", exampleZh: "房子后面有两棵大树。", examplePy: "Fángzi hòumiàn yǒu liǎng kē dà shù.", exampleEn: "There are two big trees behind the house.", category: "Animals & Nature" },
+            { measureWord: "朵", pinyin: "duǒ", usedFor: "Flowers and clouds", exampleZh: "桌子上放着三朵白色的花。", examplePy: "Zhuōzi shàng fàngzhe sān duǒ báisè de huā.", exampleEn: "There are three white flowers on the table.", category: "Animals & Nature" },
+            { measureWord: "座", pinyin: "zuò", usedFor: "Mountains, buildings, and bridges", exampleZh: "远处有一座很高的山。", examplePy: "Yuǎnchù yǒu yí zuò hěn gāo de shān.", exampleEn: "There is a very high mountain in the distance.", category: "Nature & Places" },
+            { measureWord: "间", pinyin: "jiān", usedFor: "Rooms and small indoor premises", exampleZh: "我们订了一间安静的房间。", examplePy: "Wǒmen dìng le yì jiān ānjìng de fángjiān.", exampleEn: "We booked a quiet room.", category: "Places & Organisations" },
+            { measureWord: "封", pinyin: "fēng", usedFor: "Letters and emails", exampleZh: "我收到了一封很重要的邮件。", examplePy: "Wǒ shōudào le yì fēng hěn zhòngyào de yóujiàn.", exampleEn: "I received a very important email.", category: "Documents & Media" },
+            { measureWord: "部", pinyin: "bù", usedFor: "Films, novels, phones, machines, and major works", exampleZh: "昨晚我们看了一部中国电影。", examplePy: "Zuówǎn wǒmen kàn le yí bù Zhōngguó diànyǐng.", exampleEn: "Last night we watched a Chinese film.", category: "Documents & Media" },
+            { measureWord: "场", pinyin: "chǎng", usedFor: "Events, games, and performances", exampleZh: "昨天晚上有一场精彩的比赛。", examplePy: "Zuótiān wǎnshang yǒu yì chǎng jīngcǎi de bǐsài.", exampleEn: "There was an exciting match last night.", category: "Events & Occasions" },
+            { measureWord: "次", pinyin: "cì", usedFor: "Times or occurrences of an action", exampleZh: "我去过北京三次。", examplePy: "Wǒ qùguò Běijīng sān cì.", exampleEn: "I have been to Beijing three times.", category: "Events & Occasions" },
+            { measureWord: "种", pinyin: "zhǒng", usedFor: "Kinds and types", exampleZh: "学中文有很多种方法。", examplePy: "Xué Zhōngwén yǒu hěn duō zhǒng fāngfǎ.", exampleEn: "There are many ways to learn Chinese.", category: "Quantities & Types" },
+            { measureWord: "份", pinyin: "fèn", usedFor: "Portions, copies, documents, and prepared items", exampleZh: "我点了一份炒饭。", examplePy: "Wǒ diǎn le yí fèn chǎofàn.", exampleEn: "I ordered a portion of fried rice.", category: "Food & Documents" },
+            { measureWord: "口", pinyin: "kǒu", usedFor: "Members of a household and mouthfuls", exampleZh: "我家有四口人。", examplePy: "Wǒ jiā yǒu sì kǒu rén.", exampleEn: "There are four people in my family.", category: "General & People" },
+            { measureWord: "首", pinyin: "shǒu", usedFor: "Songs and poems", exampleZh: "她唱了两首很好听的中文歌。", examplePy: "Tā chàng le liǎng shǒu hěn hǎotīng de Zhōngwén gē.", exampleEn: "She sang two lovely Chinese songs.", category: "Documents & Media" }
         ];
 
         const grammarPatterns = [
@@ -1107,7 +1193,7 @@
                         "title": "Subject + 很 + adjective",
                         "meaning": "Describe someone or something.",
                         "formula": "Subject + 很 + adjective",
-                        "explanation": "Use 很 before adjectives in simple description sentences. It often sounds natural, not always literally very.",
+                        "explanation": "In a simple adjective predicate, 很 often links the subject and adjective naturally. It does not always carry the full meaning of ‘very’.",
                         "examples": [
                                     {
                                                 "zh": "我很忙。",
@@ -1410,9 +1496,9 @@
                         "explanation": "Use 可以 for permission or possibility.",
                         "examples": [
                                     {
-                                                "zh": "我可以问你吗？",
-                                                "py": "wǒ kěyǐ wèn nǐ ma?",
-                                                "en": "May I ask you?"
+                                                "zh": "我可以问你一个问题吗？",
+                                                "py": "wǒ kěyǐ wèn nǐ yí ge wèntí ma?",
+                                                "en": "May I ask you a question?"
                                     },
                                     {
                                                 "zh": "这里可以喝水。",
@@ -1562,7 +1648,7 @@
                                     {
                                                 "zh": "多少钱？",
                                                 "py": "duōshǎo qián?",
-                                                "en": "How much money?"
+                                                "en": "How much is it?"
                                     },
                                     {
                                                 "zh": "你有多少本书？",
@@ -1645,9 +1731,9 @@
                                                 "en": "Although I am tired, I need to study."
                                     },
                                     {
-                                                "zh": "虽然天气冷，但是我们去跑步。",
-                                                "py": "suīrán tiānqì lěng, dànshì wǒmen qù pǎobù.",
-                                                "en": "Although the weather is cold, we are going running."
+                                                "zh": "虽然天气很冷，但是我们还是去跑步。",
+                                                "py": "suīrán tiānqì hěn lěng, dànshì wǒmen háishi qù pǎobù.",
+                                                "en": "Although it is very cold, we are still going running."
                                     }
                         ]
             },
@@ -1740,9 +1826,9 @@
                                                 "en": "I like tea and coffee."
                                     },
                                     {
-                                                "zh": "我和朋友去饭店。",
-                                                "py": "wǒ hé péngyou qù fàndiàn.",
-                                                "en": "My friend and I go to the restaurant."
+                                                "zh": "我和朋友一起去餐厅。",
+                                                "py": "wǒ hé péngyou yìqǐ qù cāntīng.",
+                                                "en": "My friend and I are going to a restaurant together."
                                     },
                                     {
                                                 "zh": "爸爸和妈妈在家。",
@@ -1760,9 +1846,9 @@
                         "explanation": "Use 或者 when offering alternatives in a statement, not usually a direct question.",
                         "examples": [
                                     {
-                                                "zh": "我喝茶或者咖啡。",
-                                                "py": "wǒ hē chá huòzhě kāfēi.",
-                                                "en": "I will drink tea or coffee."
+                                                "zh": "我早餐一般喝茶或者咖啡。",
+                                                "py": "wǒ zǎocān yìbān hē chá huòzhě kāfēi.",
+                                                "en": "I usually drink tea or coffee with breakfast."
                                     },
                                     {
                                                 "zh": "你可以坐车或者走路。",
@@ -1882,7 +1968,7 @@
                         "title": "还",
                         "meaning": "Still or also.",
                         "formula": "Subject + 还 + verb/adjective",
-                        "explanation": "Use 还 to mean still, or also in some contexts.",
+                        "explanation": "Use 还 to mean ‘still’ or ‘also’, depending on context.",
                         "examples": [
                                     {
                                                 "zh": "他还在学校。",
@@ -1897,7 +1983,7 @@
                                     {
                                                 "zh": "这里还有茶。",
                                                 "py": "zhèlǐ hái yǒu chá.",
-                                                "en": "There is still tea here."
+                                                "en": "There is also tea here."
                                     }
                         ]
             },
@@ -1995,9 +2081,9 @@
                                                 "en": "Mum is cooking."
                                     },
                                     {
-                                                "zh": "我在听中文。",
-                                                "py": "wǒ zài tīng Zhōngwén.",
-                                                "en": "I am listening to Chinese."
+                                                "zh": "我在听中文广播。",
+                                                "py": "wǒ zài tīng Zhōngwén guǎngbō.",
+                                                "en": "I am listening to a Chinese-language broadcast."
                                     }
                         ]
             },
@@ -2007,7 +2093,7 @@
                         "title": "Verb + 了",
                         "meaning": "Completed action or changed situation.",
                         "formula": "Verb + 了",
-                        "explanation": "Use 了 after a verb for a completed action, or at sentence end for a changed situation.",
+                        "explanation": "After a verb, 了 often marks a completed or bounded action. At the end of a sentence, it can show a new or changed situation. It is not simply a past-tense ending.",
                         "examples": [
                                     {
                                                 "zh": "我买了一个苹果。",
@@ -2062,7 +2148,7 @@
                                     {
                                                 "zh": "我要走了。",
                                                 "py": "wǒ yào zǒu le.",
-                                                "en": "I am about to leave."
+                                                "en": "I’m leaving now."
                                     },
                                     {
                                                 "zh": "要下雨了。",
@@ -2135,8 +2221,8 @@
                         "explanation": "Use 刚才 to refer to a specific moment just now.",
                         "examples": [
                                     {
-                                                "zh": "刚才我给你打电话。",
-                                                "py": "gāngcái wǒ gěi nǐ dǎ diànhuà.",
+                                                "zh": "刚才我给你打了电话。",
+                                                "py": "gāngcái wǒ gěi nǐ dǎ le diànhuà.",
                                                 "en": "I called you just now."
                                     },
                                     {
@@ -2145,8 +2231,8 @@
                                                 "en": "He was here just now."
                                     },
                                     {
-                                                "zh": "刚才我看见老师。",
-                                                "py": "gāngcái wǒ kànjiàn lǎoshī.",
+                                                "zh": "刚才我看见老师了。",
+                                                "py": "gāngcái wǒ kànjiàn lǎoshī le.",
                                                 "en": "I saw the teacher just now."
                                     }
                         ]
@@ -2265,9 +2351,9 @@
                                                 "en": "I like tea the most."
                                     },
                                     {
-                                                "zh": "今天最冷。",
-                                                "py": "jīntiān zuì lěng.",
-                                                "en": "Today is the coldest."
+                                                "zh": "今天是这个星期最冷的一天。",
+                                                "py": "jīntiān shì zhège xīngqī zuì lěng de yì tiān.",
+                                                "en": "Today is the coldest day of the week."
                                     },
                                     {
                                                 "zh": "这个学生最高。",
@@ -2398,6 +2484,8 @@
         let showPinyin = true;
         let currentSpeechRate = SLOW_SPEECH_RATE;
         let activeGrammarCategory = 'All';
+        let measureWordsView = 'learn';
+        let measureWordsStartIndex = 0;
         let activeQuiz = null;
 
         function selectLevel(level, btn) {
@@ -2449,7 +2537,7 @@
         }
 
         function hideAllScreens() {
-            ['home-screen', 'learn-screen', 'match-screen', 'quiz-screen', 'result-screen', 'search-screen', 'favourites-screen', 'mistakes-screen', 'grammar-screen', 'help-screen'].forEach(id => {
+            ['home-screen', 'learn-screen', 'match-screen', 'quiz-screen', 'result-screen', 'search-screen', 'favourites-screen', 'mistakes-screen', 'grammar-screen', 'measure-words-screen', 'help-screen'].forEach(id => {
                 document.getElementById(id).style.display = 'none';
             });
         }
@@ -2813,6 +2901,105 @@
 
 
 
+        function showMeasureWordsView() {
+            stopChallengeTimer();
+            activePracticePool = null;
+            activePracticeLabel = '';
+            hideAllScreens();
+            setSearchVisibility(true);
+            document.getElementById('searchInput').value = '';
+            document.getElementById('measure-words-screen').style.display = 'block';
+            updateLearningToggles();
+            renderMeasureWords();
+            window.scrollTo({ top: 0, behavior: 'auto' });
+        }
+
+        function setMeasureWordsView(view) {
+            measureWordsView = view === 'all' ? 'all' : 'learn';
+            if (measureWordsView === 'learn' && measureWordsStartIndex >= measureWords.length) measureWordsStartIndex = 0;
+            renderMeasureWords();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function nextMeasureWords() {
+            measureWordsStartIndex = (measureWordsStartIndex + 3) % measureWords.length;
+            renderMeasureWords();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function previousMeasureWords() {
+            measureWordsStartIndex = (measureWordsStartIndex - 3 + measureWords.length) % measureWords.length;
+            renderMeasureWords();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function createMeasureWordCard(item, index) {
+            const card = document.createElement('div');
+            card.className = 'measure-card';
+            card.innerHTML = `
+                <div class="measure-card-header">
+                    <div class="measure-heading">
+                        <span class="measure-character">${escapeHtml(item.measureWord)}</span>
+                        <span class="measure-pinyin">${escapeHtml(item.pinyin)}</span>
+                    </div>
+                    <span class="measure-number">${index + 1}</span>
+                </div>
+                <div class="measure-used-for">Used for: ${escapeHtml(item.usedFor)}</div>
+                <div class="measure-example">
+                    <div class="measure-example-content">
+                        <div class="measure-example-zh">${escapeHtml(item.exampleZh)}</div>
+                        <div class="measure-example-py">${escapeHtml(item.examplePy)}</div>
+                        <div class="measure-example-en">${escapeHtml(item.exampleEn)}</div>
+                    </div>
+                    <div class="audio-controls">
+                        <button class="audio-btn normal-btn measure-audio" type="button" aria-label="Play example audio"><span class="icon">🔊</span><span class="label">Play</span></button>
+                    </div>
+                </div>
+            `;
+            card.querySelector('.measure-audio').addEventListener('click', () => speakWord(item.exampleZh));
+            return card;
+        }
+
+        function renderMeasureWords(items = null, searchMode = false) {
+            const list = document.getElementById('measure-words-list');
+            if (!list) return;
+            const learnBtn = document.getElementById('measure-learn-three-btn');
+            const allBtn = document.getElementById('measure-view-all-btn');
+            const progress = document.getElementById('measure-progress');
+            const navigation = document.getElementById('measure-navigation');
+            let visible;
+
+            if (items) {
+                visible = items;
+            } else if (measureWordsView === 'all') {
+                visible = measureWords;
+            } else {
+                visible = measureWords.slice(measureWordsStartIndex, measureWordsStartIndex + 3);
+            }
+
+            list.innerHTML = '';
+            visible.forEach(item => list.appendChild(createMeasureWordCard(item, measureWords.indexOf(item))));
+
+            if (!searchMode) {
+                learnBtn.classList.toggle('active', measureWordsView === 'learn');
+                allBtn.classList.toggle('active', measureWordsView === 'all');
+                navigation.style.display = measureWordsView === 'learn' ? 'grid' : 'none';
+                progress.style.display = 'block';
+                progress.textContent = measureWordsView === 'all'
+                    ? `All ${measureWords.length} measure words`
+                    : `Measure words ${measureWordsStartIndex + 1}–${Math.min(measureWordsStartIndex + 3, measureWords.length)} of ${measureWords.length}`;
+            }
+            document.getElementById('measure-words-count').textContent = `${measureWords.length} measure words`;
+        }
+
+        function getAllMeasureWordSearchItems() {
+            return measureWords.map(item => ({
+                ...item,
+                source: `Measure Words: ${item.category}`,
+                searchText: `${item.measureWord} ${item.pinyin} ${item.usedFor} ${item.exampleZh} ${item.examplePy} ${item.exampleEn} ${item.category}`
+            }));
+        }
+
         function getGrammarCategories() {
             return ['All', 'Favourites', ...new Set(grammarPatterns.map(pattern => pattern.category))];
         }
@@ -2911,13 +3098,13 @@
         function updateLearningToggles() {
             document.body.classList.toggle('hide-english', !showEnglish);
             document.body.classList.toggle('hide-pinyin', !showPinyin);
-            ['toggle-english-btn', 'grammar-toggle-english-btn'].forEach(id => {
+            ['toggle-english-btn', 'grammar-toggle-english-btn', 'measure-toggle-english-btn'].forEach(id => {
                 const btn = document.getElementById(id);
                 if (!btn) return;
                 btn.textContent = showEnglish ? 'English: On' : 'English: Hidden';
                 btn.classList.toggle('is-off', !showEnglish);
             });
-            ['toggle-pinyin-btn', 'grammar-toggle-pinyin-btn'].forEach(id => {
+            ['toggle-pinyin-btn', 'grammar-toggle-pinyin-btn', 'measure-toggle-pinyin-btn'].forEach(id => {
                 const btn = document.getElementById(id);
                 if (!btn) return;
                 btn.textContent = showPinyin ? 'Pinyin: On' : 'Pinyin: Hidden';
@@ -2928,7 +3115,7 @@
 
         function updateAudioSpeedButtons() {
             const isSlow = currentSpeechRate === SLOW_SPEECH_RATE;
-            ['audio-speed-btn', 'grammar-audio-speed-btn', 'quiz-audio-speed-btn'].forEach(id => {
+            ['audio-speed-btn', 'grammar-audio-speed-btn', 'quiz-audio-speed-btn', 'measure-audio-speed-btn'].forEach(id => {
                 const btn = document.getElementById(id);
                 if (!btn) return;
                 btn.textContent = isSlow ? 'Audio: Slow 🐢' : 'Audio: Normal 🔊';
@@ -3395,14 +3582,20 @@
                 return latin.includes(query) || chinese.includes(queryRaw.toLowerCase());
             }).slice(0, 30);
 
-            document.getElementById('search-count').textContent = `${phraseMatches.length + grammarMatches.length} found`;
-            renderSearchResults(phraseMatches, grammarMatches);
+            const measureWordMatches = getAllMeasureWordSearchItems().filter(item => {
+                const latin = normalizeForSearch(`${item.searchText} ${item.source}`);
+                const chinese = `${item.measureWord} ${item.exampleZh}`.toLowerCase();
+                return latin.includes(query) || chinese.includes(queryRaw.toLowerCase());
+            }).slice(0, 30);
+
+            document.getElementById('search-count').textContent = `${phraseMatches.length + grammarMatches.length + measureWordMatches.length} found`;
+            renderSearchResults(phraseMatches, grammarMatches, measureWordMatches);
         }
 
-        function renderSearchResults(phraseMatches, grammarMatches) {
+        function renderSearchResults(phraseMatches, grammarMatches, measureWordMatches = []) {
             const container = document.getElementById('search-list');
             container.innerHTML = '';
-            if (!phraseMatches.length && !grammarMatches.length) {
+            if (!phraseMatches.length && !grammarMatches.length && !measureWordMatches.length) {
                 container.innerHTML = '<div class="info-card no-results">No results found.</div>';
                 return;
             }
@@ -3421,6 +3614,17 @@
                 grammarLabel.textContent = `Grammar patterns (${grammarMatches.length})`;
                 container.appendChild(grammarLabel);
                 grammarMatches.forEach(pattern => container.appendChild(createGrammarCard(pattern)));
+            }
+
+            if (measureWordMatches.length) {
+                const measureLabel = document.createElement('span');
+                measureLabel.className = 'section-label';
+                measureLabel.textContent = `Measure words (${measureWordMatches.length})`;
+                container.appendChild(measureLabel);
+                measureWordMatches.forEach(item => {
+                    const originalIndex = measureWords.findIndex(entry => entry.measureWord === item.measureWord && entry.pinyin === item.pinyin);
+                    container.appendChild(createMeasureWordCard(item, originalIndex));
+                });
             }
         }
 
