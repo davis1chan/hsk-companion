@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HSK Pocket Companion v20</title>
+    <title>HSK Pocket Companion v21.2</title>
+    <!-- v21.2: Match and Challenge cards use aligned shared grid rows. -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; }
@@ -55,7 +56,8 @@
         }
         .level-btn .level-count { display: block; margin-top: 5px; color: #9BA0A5; font-size: 0.75rem; font-weight: 800; }
         .level-btn.active { border-color: #1CB0F6; border-bottom-color: #1899D6; color: #1CB0F6; transform: translateY(-1px); }
-        .level-btn.common { grid-column: 1 / -1; color: #FF9600; }
+        .level-btn.common { color: #FF9600; }
+        .level-btn.measure { color: #2B9D89; }
         .level-btn:active, .mode-btn:active, .back-btn:active, .load-btn:active, .result-btn:active { transform: translateY(3px); border-bottom-width: 2px; }
         .mode-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
         .mode-btn {
@@ -145,9 +147,20 @@
         #match-complete-note { display: none; text-align: center; }
         #match-next-btn { display: none; }
         #match-next-btn.is-visible { display: block; }
-        .game-board { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
-        .column { display: flex; flex-direction: column; gap: 10px; }
+        .game-board-wrap { width: 100%; }
+        .game-board-headers { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+        .game-board { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px 12px; width: 100%; align-items: stretch; }
         .column-header { text-align: center; color: #3C3C3C; font-size: 0.82rem; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; font-weight: 800; }
+        .game-board .card { height: 100%; min-height: 76px; }
+        .game-board.long-content .card { min-height: 104px; padding: 10px 8px; }
+        .game-board.long-content .card .character { font-size: 0.96rem; line-height: 1.25; }
+        .game-board.long-content .card .pinyin { font-size: 0.64rem; line-height: 1.2; }
+        .game-board.long-content .card .english { font-size: 0.76rem; line-height: 1.22; }
+        @media (max-width: 420px) {
+            .game-board.long-content .card { min-height: 116px; }
+            .game-board.long-content .card .character { font-size: 0.9rem; }
+            .game-board.long-content .card .english { font-size: 0.72rem; }
+        }
         .score-row { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
         .score-pill { background: white; border: 2px solid #E5E5E5; border-bottom: 4px solid #E5E5E5; border-radius: 999px; padding: 8px 13px; font-weight: 800; }
         .card {
@@ -158,6 +171,10 @@
         .card .character { font-size: 1.18rem; color: #FF4B4B; font-weight: 800; line-height: 1.25; }
         .card .pinyin { font-size: 0.68rem; color: #1CB0F6; font-weight: 800; margin-top: 3px; line-height: 1.25; }
         .card .english { font-size: 0.82rem; color: #4B4B4B; font-weight: 800; line-height: 1.2; }
+        .card.long-text-card { min-height: 94px; padding: 9px 7px; }
+        .card.long-text-card .character { font-size: 0.92rem; line-height: 1.2; }
+        .card.long-text-card .pinyin { font-size: 0.61rem; }
+        .card.long-text-card .english { font-size: 0.72rem; line-height: 1.15; }
         .card.selected { border-color: #1CB0F6; border-bottom-color: #1899D6; transform: translateY(-1px); box-shadow: 0 8px 18px rgba(28,176,246,0.18); }
         .card.correct { border-color: #58CC02; border-bottom-color: #58A700; background: #D7FFB8; pointer-events: none; }
         .card.wrong { border-color: #FF4B4B; border-bottom-color: #CC3B3B; background: #FFD6D6; animation: shake 0.35s ease; }
@@ -166,7 +183,7 @@
         #result-screen { text-align: center; padding-top: 20px; }
         #result-screen h2 { color: #FF4B4B; font-size: 2rem; }
         .no-results { text-align: center; }
-        @media (min-width: 650px) { .mode-grid { grid-template-columns: 1fr 1fr; } .level-grid { grid-template-columns: repeat(5, 1fr); } .level-btn.common { grid-column: auto; } }
+        @media (min-width: 650px) { .mode-grid { grid-template-columns: 1fr 1fr; } .level-grid { grid-template-columns: repeat(3, 1fr); } }
 
         .quiz-btn { background-color: #CE82FF; border-bottom-color: #A765CC; }
         .quiz-progress-card { background: white; border: 2px solid #E5E5E5; border-bottom: 5px solid #E5E5E5; border-radius: 20px; padding: 10px 12px; margin-bottom: 10px; }
@@ -358,10 +375,10 @@
                 <div class="intro-title">Your pocket Mandarin practice app</div>
                 <p class="intro-text">Practise HSK 1-3 vocabulary, useful beginner phrases, 50 sentence-building grammar patterns, and 30 common measure words in short, playful sessions.</p>
                 <div class="how-grid">
-                    <div class="how-step"><strong>📖 Learn</strong><br>Review 5 words or phrases at a time with Chinese, pinyin, English, and audio.</div>
+                    <div class="how-step"><strong>📖 Learn</strong><br>Review five words or phrases at a time, or three detailed measure-word cards.</div>
                     <div class="how-step"><strong>🎮 Match</strong><br>Match Chinese cards with English meanings to build quick recall.</div>
                     <div class="how-step"><strong>🧩 Grammar</strong><br>Save whole grammar patterns and practise the example sentences with audio.</div>
-                    <div class="how-step"><strong>🔢 Measure Words</strong><br>Learn three classifiers at a time with fuller examples, or browse all 30 as a reference.</div>
+                    <div class="how-step"><strong>🔢 Measure Words</strong><br>Select Measure Words, then learn, match, take a tailored quiz, or try the 60-second challenge.</div>
                     <div class="how-step"><strong>⭐ Favourites</strong><br>Build your own revision list for words, phrases, and grammar patterns.</div>
                 </div>
                 <p class="small-note">Tip: download the file and open it in your browser for offline practice. Audio uses your browser's built-in Chinese voice, so sound quality and availability may vary by device.</p>
@@ -374,13 +391,14 @@
                 <button class="mode-btn top-action-btn" onclick="showFavouritesView()"><span class="btn-icon">⭐</span>Favourites<span class="btn-desc">Review saved words and phrases.</span></button>
                 <button class="mode-btn top-action-btn mistakes-top-btn" onclick="showMistakesView()"><span class="btn-icon">🔁</span>Mistakes<span class="btn-desc">Review words you missed.</span></button>
             </div>
-            <h2>Choose your level</h2>
+            <h2>Choose your content</h2>
             <div class="level-grid" id="level-selector">
                 <button class="level-btn active" data-level="1" onclick="selectLevel('1', this)">HSK 1<span class="level-count" id="count-hsk-1"></span></button>
                 <button class="level-btn" data-level="2" onclick="selectLevel('2', this)">HSK 2<span class="level-count" id="count-hsk-2"></span></button>
                 <button class="level-btn" data-level="3" onclick="selectLevel('3', this)">HSK 3<span class="level-count" id="count-hsk-3"></span></button>
                 <button class="level-btn" data-level="all" onclick="selectLevel('all', this)">All HSK 1-3<span class="level-count" id="count-hsk-all"></span></button>
                 <button class="level-btn common" data-level="common" onclick="selectLevel('common', this)">Common Phrases</button>
+                <button class="level-btn measure" data-level="measure" onclick="selectLevel('measure', this)">Measure Words<span class="level-count">30 classifiers</span></button>
             </div>
 
             <span class="section-label">Choose mode</span>
@@ -389,8 +407,7 @@
                 <button class="mode-btn match-btn" onclick="startMatchMode()"><span class="btn-icon">🎮</span>Match Game<span class="btn-desc">Match five Chinese cards with their English meanings.</span></button>
                 <button class="mode-btn quiz-btn" onclick="startQuizMode()"><span class="btn-icon">📝</span>Standard Quiz<span class="btn-desc">25 mixed questions: vocab, listening, gap-fill, and grammar.</span></button>
                 <button class="mode-btn grammar-btn" onclick="showGrammarView()"><span class="btn-icon">🧩</span>Grammar Patterns<span class="btn-desc">50 sentence-building patterns with examples and audio.</span></button>
-                <button class="mode-btn measure-words-btn" onclick="showMeasureWordsView()"><span class="btn-icon">🔢</span>Measure Words<span class="btn-desc">Learn 30 common classifiers through full example sentences.</span></button>
-                <button class="mode-btn challenge-btn" id="challenge-btn" onclick="startChallengeMode()"><span class="btn-icon">⏱️</span>60 Second Challenge<span class="btn-desc">HSK only: match 30 words in 60 seconds, 5 pairs at a time.</span></button>
+                <button class="mode-btn challenge-btn" id="challenge-btn" onclick="startChallengeMode()"><span class="btn-icon">⏱️</span>60 Second Challenge<span class="btn-desc">Match up to 30 selected items in 60 seconds, five pairs at a time.</span></button>
             </div>
             <div class="info-card" style="margin-top:20px;">Tip: use Common Phrases to practise useful beginner-level sentences.</div>
         </div>
@@ -414,9 +431,12 @@
                 <div class="score-pill">Mistakes: <span id="mistakes-count">0</span></div>
                 <div class="score-pill" id="timer-pill">Time: <span id="timer-count">60</span>s</div>
             </div>
-            <div class="game-board" id="game-board">
-                <div><div class="column-header">Chinese</div><div class="column" id="chinese-column"></div></div>
-                <div><div class="column-header">English</div><div class="column" id="english-column"></div></div>
+            <div class="game-board-wrap">
+                <div class="game-board-headers">
+                    <div class="column-header">Chinese</div>
+                    <div class="column-header">English</div>
+                </div>
+                <div class="game-board" id="game-board"></div>
             </div>
             <div class="match-controls">
                 <div class="info-card" id="match-complete-note">Nice round. Load another 5 when you are ready.</div>
@@ -2477,6 +2497,7 @@
         let challengeTimeLeft = CHALLENGE_SECONDS;
         let challengeQueue = [];
         let challengeCompleted = 0;
+        let activeChallengeTarget = CHALLENGE_TARGET;
         let activePracticePool = null;
         let activePracticeLabel = '';
         let currentRoundByKey = {};
@@ -2495,15 +2516,30 @@
             updateChallengeButtonVisibility();
         }
 
+        function measureWordsAsPracticeItems() {
+            return measureWords.map(item => ({
+                character: item.measureWord,
+                pinyin: item.pinyin,
+                english: item.usedFor,
+                exampleZh: item.exampleZh,
+                examplePy: item.examplePy,
+                exampleEn: item.exampleEn,
+                category: item.category,
+                isMeasureWord: true
+            }));
+        }
+
         function getWordPool() {
             if (selectedLevel === 'all') return [...wordsByLevel[1], ...wordsByLevel[2], ...wordsByLevel[3]];
             if (selectedLevel === 'common') return commonPhrases;
+            if (selectedLevel === 'measure') return measureWordsAsPracticeItems();
             return wordsByLevel[selectedLevel] || [];
         }
 
         function getLevelLabel() {
             if (selectedLevel === 'all') return 'All HSK 1-3';
             if (selectedLevel === 'common') return 'Common Phrases';
+            if (selectedLevel === 'measure') return 'Measure Words';
             return `HSK ${selectedLevel}`;
         }
 
@@ -2621,6 +2657,7 @@
                 if (kind && question.type !== kind) return false;
                 if (selectedLevel === 'all') return ['1', '2', '3'].includes(question.level);
                 if (selectedLevel === 'common') return question.level === 'common';
+                if (selectedLevel === 'measure') return false;
                 return question.level === selectedLevel;
             });
         }
@@ -2671,7 +2708,55 @@
             return cloned;
         }
 
+        function makeMeasureWordGapQuestion(item, pool) {
+            const blanked = item.exampleZh.replace(item.character, '___');
+            if (blanked === item.exampleZh) return null;
+            const distractors = shuffleArray(pool.filter(other => other.character !== item.character))
+                .slice(0, QUIZ_OPTION_COUNT - 1)
+                .map(other => other.character);
+            return {
+                type: 'gap_fill',
+                label: 'Measure Word Gap-Fill',
+                promptZh: blanked,
+                promptEn: item.exampleEn,
+                options: shuffleArray([item.character, ...distractors]),
+                answer: item.character,
+                mistakeWord: item
+            };
+        }
+
+        function makeMeasureWordUsageQuestion(item, pool) {
+            const distractors = shuffleArray(pool.filter(other => other.character !== item.character))
+                .slice(0, QUIZ_OPTION_COUNT - 1)
+                .map(other => other.character);
+            return {
+                type: 'measure_usage',
+                label: 'Choose the Measure Word',
+                promptEn: `Which measure word is used for: ${item.english}?`,
+                options: shuffleArray([item.character, ...distractors]),
+                answer: item.character,
+                mistakeWord: item
+            };
+        }
+
+        function buildMeasureWordQuizQuestions() {
+            const pool = getWordPool();
+            const questions = [];
+            const shuffled = shuffleArray([...pool]);
+            shuffled.slice(0, 15).forEach(item => {
+                const question = makeMeasureWordGapQuestion(item, pool);
+                if (question) questions.push(question);
+            });
+            shuffled.slice(15, 25).forEach(item => questions.push(makeMeasureWordUsageQuestion(item, pool)));
+            while (questions.length < QUIZ_QUESTION_COUNT) {
+                const item = shuffleArray([...pool])[0];
+                questions.push(Math.random() < 0.65 ? makeMeasureWordGapQuestion(item, pool) : makeMeasureWordUsageQuestion(item, pool));
+            }
+            return shuffleArray(questions.filter(Boolean)).slice(0, QUIZ_QUESTION_COUNT);
+        }
+
         function buildQuizQuestions() {
+            if (selectedLevel === 'measure') return buildMeasureWordQuizQuestions();
             const pool = getWordPool();
             const generatedPlan = [
                 ...Array(8).fill('zh_to_en'),
@@ -2848,6 +2933,11 @@
         }
 
         function startLearnMode() {
+            if (selectedLevel === 'measure') {
+                measureWordsView = 'learn';
+                showMeasureWordsView();
+                return;
+            }
             activePracticePool = null;
             activePracticeLabel = '';
             hideAllScreens();
@@ -3177,33 +3267,38 @@
         }
 
         function renderMatchCards(chineseOrder, englishOrder) {
-            const chineseCol = document.getElementById('chinese-column');
-            const englishCol = document.getElementById('english-column');
-            chineseCol.innerHTML = '';
-            englishCol.innerHTML = '';
+            const gameBoard = document.getElementById('game-board');
+            gameBoard.innerHTML = '';
+            gameBoard.classList.toggle('long-content', selectedLevel === 'common' || selectedLevel === 'measure');
             currentRoundByKey = {};
             [...chineseOrder, ...englishOrder].forEach(word => { currentRoundByKey[makeItemKey(word)] = word; });
 
-            chineseOrder.forEach(word => {
-                const card = document.createElement('div');
-                card.className = 'card chinese-card';
-                card.dataset.key = makeItemKey(word);
-                card.innerHTML = `<span class="character">${escapeHtml(word.character)}</span><span class="pinyin">${escapeHtml(word.pinyin)}</span>`;
-                card.addEventListener('click', () => {
-                    speakWord(word.character, NORMAL_SPEECH_RATE);
-                    handleCardClick(card, 'chinese', chineseOrder.length);
-                });
-                chineseCol.appendChild(card);
-            });
+            const totalRows = Math.max(chineseOrder.length, englishOrder.length);
+            for (let index = 0; index < totalRows; index++) {
+                const chineseWord = chineseOrder[index];
+                const englishWord = englishOrder[index];
 
-            englishOrder.forEach(word => {
-                const card = document.createElement('div');
-                card.className = 'card english-card';
-                card.dataset.key = makeItemKey(word);
-                card.innerHTML = `<span class="english">${escapeHtml(word.english)}</span>`;
-                card.addEventListener('click', () => handleCardClick(card, 'english', englishOrder.length));
-                englishCol.appendChild(card);
-            });
+                if (chineseWord) {
+                    const chineseCard = document.createElement('div');
+                    chineseCard.className = 'card chinese-card' + (chineseWord.character.length > 8 ? ' long-text-card' : '');
+                    chineseCard.dataset.key = makeItemKey(chineseWord);
+                    chineseCard.innerHTML = `<span class="character">${escapeHtml(chineseWord.character)}</span><span class="pinyin">${escapeHtml(chineseWord.pinyin)}</span>`;
+                    chineseCard.addEventListener('click', () => {
+                        speakWord(chineseWord.character, NORMAL_SPEECH_RATE);
+                        handleCardClick(chineseCard, 'chinese', chineseOrder.length);
+                    });
+                    gameBoard.appendChild(chineseCard);
+                }
+
+                if (englishWord) {
+                    const englishCard = document.createElement('div');
+                    englishCard.className = 'card english-card' + (englishWord.english.length > 34 ? ' long-text-card' : '');
+                    englishCard.dataset.key = makeItemKey(englishWord);
+                    englishCard.innerHTML = `<span class="english">${escapeHtml(englishWord.english)}</span>`;
+                    englishCard.addEventListener('click', () => handleCardClick(englishCard, 'english', englishOrder.length));
+                    gameBoard.appendChild(englishCard);
+                }
+            }
         }
 
         function handleCardClick(card, type, totalPairs) {
@@ -3308,7 +3403,6 @@
         }
 
         function startChallengeMode() {
-            if (selectedLevel === 'common') return;
             activePracticePool = null;
             activePracticeLabel = '';
             currentMode = 'challenge';
@@ -3318,14 +3412,16 @@
             mistakes = 0;
             challengeCompleted = 0;
             challengeTimeLeft = CHALLENGE_SECONDS;
-            challengeQueue = shuffleArray([...getWordPool()]).slice(0, CHALLENGE_TARGET);
+            const challengePool = getWordPool();
+            activeChallengeTarget = Math.min(CHALLENGE_TARGET, challengePool.length);
+            challengeQueue = shuffleArray([...challengePool]).slice(0, activeChallengeTarget);
 
             hideAllScreens();
             setSearchVisibility(false);
             document.getElementById('match-screen').style.display = 'block';
             document.getElementById('match-level-badge').textContent = getLevelLabel() + ' Challenge';
             document.getElementById('matched-count').textContent = '0';
-            document.getElementById('total-pairs-count').textContent = CHALLENGE_TARGET;
+            document.getElementById('total-pairs-count').textContent = activeChallengeTarget;
             document.getElementById('mistakes-count').textContent = '0';
             document.getElementById('timer-count').textContent = CHALLENGE_SECONDS;
             document.getElementById('timer-pill').classList.add('is-visible');
@@ -3351,8 +3447,8 @@
         function completeChallengeRound(roundPairs) {
             challengeCompleted += roundPairs;
             document.getElementById('matched-count').textContent = challengeCompleted;
-            if (challengeCompleted >= CHALLENGE_TARGET) {
-                showResult(CHALLENGE_TARGET, `Challenge complete: 30 matched in ${CHALLENGE_SECONDS - challengeTimeLeft} seconds.`);
+            if (challengeCompleted >= activeChallengeTarget) {
+                showResult(activeChallengeTarget, `Challenge complete: ${activeChallengeTarget} matched in ${CHALLENGE_SECONDS - challengeTimeLeft} seconds.`);
                 return;
             }
             setTimeout(loadChallengeRound, 350);
@@ -3365,7 +3461,7 @@
                 document.getElementById('timer-count').textContent = challengeTimeLeft;
                 if (challengeTimeLeft <= 10) document.getElementById('timer-pill').classList.add('timer-warning');
                 if (challengeTimeLeft <= 0) {
-                    showResult(challengeCompleted + matchedPairs, `Time's up: you matched ${challengeCompleted + matchedPairs} of ${CHALLENGE_TARGET}.`);
+                    showResult(challengeCompleted + matchedPairs, `Time's up: you matched ${challengeCompleted + matchedPairs} of ${activeChallengeTarget}.`);
                 }
             }, 1000);
         }
@@ -3385,7 +3481,16 @@
         function updateChallengeButtonVisibility() {
             const btn = document.getElementById('challenge-btn');
             if (!btn) return;
-            btn.classList.toggle('is-hidden', selectedLevel === 'common');
+            btn.classList.remove('is-hidden');
+            const description = btn.querySelector('.btn-desc');
+            if (!description) return;
+            if (selectedLevel === 'common') {
+                description.textContent = 'Match up to 30 useful phrases in 60 seconds, five pairs at a time.';
+            } else if (selectedLevel === 'measure') {
+                description.textContent = 'Match 30 measure words with their common uses in 60 seconds.';
+            } else {
+                description.textContent = 'Match 30 selected words in 60 seconds, five pairs at a time.';
+            }
         }
 
         function makeItemKey(word) {
