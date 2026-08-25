@@ -2606,14 +2606,68 @@
             window.speechSynthesis && window.speechSynthesis.cancel();
         }
 
+        let tingtingVoiceLoadPromise = null;
+        let speechRequestSequence = 0;
+
+        function getTingtingVoice() {
+            if (!window.speechSynthesis) return null;
+            const voices = window.speechSynthesis.getVoices();
+            return voices.find(voice => {
+                const language = (voice.lang || '').toLowerCase().replace('_', '-');
+                return language.startsWith('zh-cn') && /ting[\s-]*ting/i.test(voice.name || '');
+            }) || voices.find(voice => /ting[\s-]*ting/i.test(voice.name || '')) || null;
+        }
+
+        function waitForTingtingVoice() {
+            if (!window.speechSynthesis) return Promise.resolve(null);
+            const availableVoice = getTingtingVoice();
+            if (availableVoice) return Promise.resolve(availableVoice);
+            if (tingtingVoiceLoadPromise) return tingtingVoiceLoadPromise;
+
+            tingtingVoiceLoadPromise = new Promise(resolve => {
+                const synth = window.speechSynthesis;
+                let finished = false;
+                let timeoutId = null;
+
+                const finish = voice => {
+                    if (finished) return;
+                    finished = true;
+                    synth.removeEventListener('voiceschanged', checkVoices);
+                    if (timeoutId) clearTimeout(timeoutId);
+                    resolve(voice || null);
+                };
+
+                const checkVoices = () => {
+                    const voice = getTingtingVoice();
+                    if (voice) finish(voice);
+                };
+
+                synth.addEventListener('voiceschanged', checkVoices);
+                synth.getVoices();
+                checkVoices();
+                timeoutId = setTimeout(() => finish(getTingtingVoice()), 1500);
+            });
+
+            return tingtingVoiceLoadPromise;
+        }
+
         function speakWord(text, rate = currentSpeechRate) {
             if (!window.speechSynthesis) return;
             window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'zh-CN';
-            utterance.rate = rate;
-            window.speechSynthesis.speak(utterance);
+            const requestSequence = ++speechRequestSequence;
+            waitForTingtingVoice().then(loadedVoice => {
+                if (requestSequence !== speechRequestSequence) return;
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'zh-CN';
+                const tingtingVoice = loadedVoice || getTingtingVoice();
+                if (tingtingVoice) utterance.voice = tingtingVoice;
+                utterance.rate = rate;
+                window.speechSynthesis.speak(utterance);
+            });
         }
+
+        // Start Chrome's asynchronous voice discovery before the first audio click.
+        waitForTingtingVoice();
 
         function containsChinese(text) {
             return /[\u3400-\u9FFF]/.test(text || '');
